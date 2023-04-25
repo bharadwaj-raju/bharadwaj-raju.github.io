@@ -38,6 +38,10 @@ body .highlight {
     border-color: transparent;
 }
 
+.highlight pre ::selection, pre code ::selection, pre ::selection {
+    background-color: var(--highlight-med);
+}
+
 input {
     background-color: var(--surface) !important;
     border: none !important;
