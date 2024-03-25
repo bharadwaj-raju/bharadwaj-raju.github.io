@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/dark.css" media="screen and (prefers-color-scheme: dark)">
+  <title>{% if page %}{{page.title}} \ {% endif %} ~bharadwaj</title>
+  <script src="/js/colorscheme.js"></script>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="/" id="logo">~<span id="logo-full">bharadwaj</span></a>
+      <div id="menu">
+        <a href="/posts/">Posts</a>
+      </div>
+    </nav>
+  </header>
+  <section class="section">
+    <div class="container">
+      {% block content %} {% endblock %}
+    </div>
+  </section>
+</body>
+
+</html>
