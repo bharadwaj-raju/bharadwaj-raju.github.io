@@ -373,7 +373,9 @@ body {
 @media (min-width: 1400px) {
 
     .sidenote,
-    .sidenote-ref {
+    .sidenote-ref,
+    .sidenote *,
+    .sidenote-ref * {
         transition: all var(--transition);
     }
 
