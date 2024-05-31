@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
+{% if page.toc %}
 <div class="toc">
-  {% if page.toc %}
   <ul>
     {% for h1 in page.toc %}
     <li>
