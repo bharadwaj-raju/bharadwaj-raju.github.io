@@ -26,6 +26,30 @@
 }
 
 @font-face {
+    font-family: "Cardo";
+    src: url("/fonts/Cardo/Cardo-Regular.ttf");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Cardo";
+    src: url("/fonts/Cardo/Cardo-Italic.ttf");
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Cardo";
+    src: url("/fonts/Cardo/Cardo-Bold.ttf");
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
     font-family: "Inter";
     src: url("/fonts/Inter/Inter-VariableFont_slnt,wght.ttf");
     font-weight: 100 900;
@@ -41,6 +65,7 @@
 body {
     /*--base: #faf4ed;*/
     --base: #fff;
+    --base-dark: #1b1b1b;
     /*--surface: #fffaf3;*/
     --surface: rgba(0, 0, 0, 0.05);
     /*--surface-dark: #1f1d2e;*/
@@ -54,7 +79,7 @@ body {
     --gold-muted: #f6c177;
     --gold-muted-tr: #f6c1772b;
     --foam: #9ccfd8;
-    --foam-darker: #56949f;
+    --foam-darker: #c;
     --foam-tr: #9ccfd82b;
     --lightgreen: #9cd8a0;
     --lightgreen-tr: #9cd8a02b;
@@ -86,17 +111,28 @@ body {
     --highlight-high: #cecacd;
     --radius: 8px;
     --content-gap: 1.8rem;
+    --slider-height: 8px;
+    --body-font: 'et-book', 'Cardo';
 }
 
 body {
-    font-family: 'et-book';
+    font-family: var(--body-font);
     font-weight: 400;
     font-size: 1.6rem;
-    line-height: 150%;
+    line-height: 140%;
     color: var(--text);
     padding: 0;
     margin: 0;
     background-color: var(--base);
+}
+
+.frontpage {
+    font-size: 1.6rem;
+}
+
+abbr {
+    font-variant: all-small-caps;
+    font-size: 115%;
 }
 
 blockquote {
@@ -105,11 +141,16 @@ blockquote {
 }
 
 main img {
-    width: 100%;
+    max-width: 100%;
+}
+
+figure img {
+    width: unset;
 }
 
 figure {
     margin-bottom: calc(2 * var(--gap));
+    text-align: center;
 
     figcaption {
         font-size: 1.1rem;
@@ -117,9 +158,78 @@ figure {
     }
 }
 
+/*Chrome*/
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    input[type='range'] {
+        background-color: transparent;
+    }
+}
+
+/** FF*/
+input[type="range"]::-moz-range-progress {
+    background-color: var(--foam);
+}
+
+input[type="range"]::-moz-range-track {
+    background-color: var(--text-light);
+}
+
+input[type="range"]::-moz-range-thumb {
+    appearance: none;
+    -moz-appearance: none;
+    overflow: visible;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border-color: transparent;
+    background: var(--foam);
+    z-index: 0;
+}
+
 a,
 a:visited {
     color: var(--link);
+}
+
+::selection {
+    background-color: var(--foam-darker);
+    color: var(--base-dark);
+}
+
+ol {
+    counter-reset: ol-counter;
+    list-style: none;
+}
+
+ol>li {
+    break-inside: avoid-column;
+    margin-bottom: calc(0.5 * var(--gap));
+}
+
+ol>li::before {
+    counter-increment: ol-counter;
+    content: counter(ol-counter);
+    color: var(--muted);
+    margin-left: calc(-1.5 * var(--gap));
+    position: absolute;
+    border: 1px solid currentColor;
+    width: 0.9em;
+    height: 0.9em;
+    font-size: 0.7em;
+    margin-top: 0.35em;
+    border-radius: 50%;
+    display: inline-grid;
+    place-items: center;
+    line-height: 0.7em;
+    padding: 0.05em;
+}
+
+ul {
+    list-style-type: disc;
+}
+
+ul>li::marker {
+    color: var(--muted);
 }
 
 main {
@@ -127,6 +237,12 @@ main {
     margin: auto;
     margin-top: 48px;
     padding: 20px;
+
+    @media (max-width: 600px) {
+        padding-left: 0px;
+        padding-right: 0px;
+        max-width: 75%;
+    }
 }
 
 nav {
@@ -156,12 +272,9 @@ header {
     opacity: 1;
 }
 
-#menu {
-    font-size: 20px;
-}
-
 h1 {
-    font-size: 40px;
+    font-size: 64px;
+    font-style: italic;
 }
 
 h2,
@@ -199,6 +312,7 @@ h6 {
             color: var(--muted);
             border: none;
             margin-left: -1em;
+            margin-top: -4px;
         }
     }
 }
@@ -213,6 +327,7 @@ pre {
     border-radius: var(--radius);
     max-height: 500px;
     overflow: scroll;
+    line-height: 1.5rem;
 }
 
 table {
@@ -236,7 +351,7 @@ table td {
     padding: 12px 8px;
     line-height: 1.5;
     border-bottom: 1px solid var(--muted);
-    font-size: 1.1rem;
+    font-size: 1.3rem;
 }
 
 .subtitle {
@@ -256,7 +371,7 @@ table td {
     font-style: italic;
     margin-bottom: 10px;
     padding-bottom: 10px;
-    font-family: et-book;
+    font-family: var(--body-font);
     border-bottom: 1px solid currentColor;
 }
 
@@ -313,6 +428,7 @@ aside {
 .sidenote {
     font-size: 80%;
     position: relative;
+    margin-bottom: var(--gap);
 }
 
 /* Wide viewport */
@@ -323,6 +439,7 @@ aside {
         margin-right: -23vw;
         text-align: left;
         width: 20vw;
+        padding-left: 5px;
     }
 }
 
@@ -366,9 +483,9 @@ body {
 .sidenote-number::after {
     content: counter(sidenote-counter);
     position: relative;
-    vertical-align: super;
+    vertical-align: baseline;
     font-size: 0.7em;
-    top: -0.2rem;
+    top: -0.7rem;
     font-weight: bold;
     margin-left: 0.2rem;
 }
@@ -441,8 +558,9 @@ body {
     position: fixed;
     left: 0;
     top: 0;
-    font-size: 1.2rem;
-    font-family: Inter;
+    // font-size: 1.2rem;
+    // font-family: Inter;
+    font-variant: all-small-caps;
     max-width: 300px;
     margin-left: calc(-1 * var(--gap));
     background: 0 0 !important;
@@ -466,10 +584,12 @@ body {
         line-height: 1.5rem;
 
         li {
-            margin-bottom: 15px;
+            margin-bottom: 8px;
+            height: 25px;
         }
 
         a {
+            font-size: 22px;
             color: var(--subtle);
             text-decoration: none;
 
@@ -477,6 +597,7 @@ body {
 
             &.active {
                 font-weight: bold;
+                font-size: 23px;
                 color: var(--gold-text);
             }
 

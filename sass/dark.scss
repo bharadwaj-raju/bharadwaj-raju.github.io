@@ -2,7 +2,7 @@
 
 body {
     /*     --base: #191724; */
-    --base: #1b1b1b;
+    --base: var(--base-dark);
     --surface: var(--surface-dark);
     --overlay: var(--overlay-dark);
     --text: var(--text-light);
@@ -36,15 +36,20 @@ pre ::selection {
     background-color: var(--highlight-med);
 }
 
-input {
+input[type=text] {
     background-color: var(--surface) !important;
     border: none !important;
     color: var(--text) !important;
 }
 
-input:focus {
+input[type=text]:focus {
     background-color: var(--overlay) !important;
     border: none !important;
+}
+
+::selection {
+    background-color: var(--link);
+    color: var(--base);
 }
 
 
