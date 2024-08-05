@@ -82,7 +82,7 @@ The algorithm for generation is:
       - If it is a long walker and its age module some frequency parameter is zero, spawn a short walker at that position.
       - If its age is greater than some maximum age, it dies, and…
         - If its generation is less than some maximum generation, and it is a long walker, spawn some number of long walkers where it stopped, each aimed slightly offset from the parent's angle.
-      - Else, the walker moves in a random direction, chosen via weighted sampling where the weights are smaller the larger the angular distance between that direction and the target angle, and {% sidenote(ref="the most opposite direction is removed") %}Otherwise, the walkers wind back on themselves and fail to spread apart sufficiently. An example of what that looks like: ![with least likely included, the generated shape is a lot smaller and more bloblike](./out2.png){% end %} by subtracting its weight from every weight. The point it moves to is filled in on the grid.
+      - Else, the walker moves in a random direction, chosen via weighted sampling where the weights are smaller the larger the angular distance between that direction and the target angle, and {% sidenote(ref="the most opposite direction is removed") %}Otherwise, the walkers wind back on themselves and fail to spread apart sufficiently. An example of what that looks like: ![with least likely included, the generated shape is a lot smaller and more bloblike](./with-least-likely-included.png){% end %} by subtracting its weight from every weight. The point it moves to is filled in on the grid.
 
 ## Implementation
 
