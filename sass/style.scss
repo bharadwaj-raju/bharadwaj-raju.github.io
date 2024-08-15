@@ -50,10 +50,34 @@
 }
 
 @font-face {
-    font-family: "Inter";
-    src: url("/fonts/Inter/Inter-VariableFont_slnt,wght.ttf");
-    font-weight: 100 900;
+    font-family: "Fira";
+    src: url("/fonts/Fira_Sans/FiraSans-Regular.ttf");
+    font-weight: normal;
     font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Fira";
+    src: url("/fonts/Fira_Sans/FiraSans-Bold.ttf");
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Fira";
+    src: url("/fonts/Fira_Sans/FiraSans-Italic.ttf");
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Fira";
+    src: url("/fonts/Fira_Sans/FiraSans-BoldItalic.ttf");
+    font-weight: bold;
+    font-style: italic;
     font-display: swap;
 }
 
@@ -559,9 +583,9 @@ body {
     left: 0;
     top: 0;
     // font-size: 1.2rem;
-    // font-family: Inter;
-    font-variant: all-small-caps;
-    max-width: 300px;
+    font-family: Fira;
+    // font-variant: all-small-caps;
+    max-width: 320px;
     margin-left: calc(-1 * var(--gap));
     background: 0 0 !important;
     height: 100%;
@@ -585,10 +609,14 @@ body {
 
         li {
             margin-bottom: 8px;
+
+            ul {
+                margin-top: 8px;
+            }
         }
 
         a {
-            font-size: 22px;
+            font-size: 16px;
             color: var(--subtle);
             text-decoration: none;
 
@@ -596,7 +624,7 @@ body {
 
             &.active {
                 font-weight: bold;
-                font-size: 23px;
+                font-size: 17px;
                 color: var(--gold-text);
             }
 
