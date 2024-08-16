@@ -36,7 +36,7 @@ window.onload = () => {
     // if we have a hash highlight that initially instead of basing on visible
     if (hashes.includes(location.hash)) {
       links.forEach(link => link.classList.remove("active"));
-      document.querySelector(`a[href="${location.hash}"]`).classList.add("active");
+      document.querySelector(`a[href="${location.href}"]`).classList.add("active");
     }
   
     function isScrolledIntoView(el) {
@@ -83,12 +83,12 @@ window.onload = () => {
     links.forEach(link => {
       link.addEventListener("click", e => {
         setTimeout(function() {
-          hash = location.hash;
+          hash = location.href;
             links.forEach(link_ => link_.classList.remove("active"));
             document.querySelector(`a[href="${hash}"]`).classList.add("active");
         }, 50);
         setTimeout(function() {
-          hash = location.hash;
+          hash = location.href;
           links.forEach(link_ => link_.classList.remove("active"));
           document.querySelector(`a[href="${hash}"]`).classList.add("active");
         }, 500);
