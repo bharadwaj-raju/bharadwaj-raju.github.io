@@ -385,6 +385,7 @@ table td {
 .dateline {
     margin-top: -18px;
     font-size: 18px;
+    font-family: Fira
 }
 
 .note::before {
@@ -585,7 +586,7 @@ body {
     // font-size: 1.2rem;
     font-family: Fira;
     // font-variant: all-small-caps;
-    max-width: 320px;
+    max-width: 330px;
     margin-left: calc(-1 * var(--gap));
     background: 0 0 !important;
     height: 100%;
@@ -616,6 +617,8 @@ body {
         }
 
         a {
+            display: inline-block;
+            height: 25px;
             font-size: 16px;
             color: var(--subtle);
             text-decoration: none;
