@@ -63,7 +63,7 @@ After a lot of fiddling with the Android Bluetooth settings, restarting, and so 
 
 {% figure(src="nothing-x-on-android-x86.png" alt="Nothing X running on Android-x86") %}Look at the pixelation on those images. This app wasn’t built with this DPI in mind.{% end %}
 
-After setting up developer options to enable Bluetooth HCI sniffing and USB debugging, we can {% sidenote(ref="connect via ADB") %}See the &ldquo;using adb with a NAT’ed VM&rdquo; section in [the Android-x86 docs](https://www.android-x86.org/documentation/debug.html). Change the `adb localhost:5555` command to `adb connect localhost:555`.{% end %}.
+After setting up developer options to enable Bluetooth HCI sniffing and USB debugging, we can {% sidenote(ref="connect via ADB") %}See the &ldquo;using adb with a NAT’ed VM&rdquo; section in [the Android-x86 docs](https://www.android-x86.org/documentation/debug.html). Change the `adb localhost:5555` command to `adb connect localhost:5555`.{% end %}.
 
 Once we’ve connected ADB, we can simply select the Android device in Wireshark running on the host, and get our first look at the Bluetooth traffic.
 
@@ -85,7 +85,7 @@ From this we can sift through the packets better. The first thing I tested was s
 Let’s try manually constructing and sending these packets to the device, back on desktop Linux. I used Wireshark to filter all packets of channel 15 and saved it as JSON,
 then wrote a [quick Python script](https://gitlab.com/-/snippets/3636681) to read all the packets and send them out, with a 1 second gap to let me observe the effects. When I ran it, I finally heard that sigh in my ear that signalled transparency mode. This is the packet that does it:
 
-```text
+```
 55:60:01:0f:f0:03:00:cb:01:07:00:c5:af
 ```
 
@@ -110,13 +110,13 @@ The packet to start an ear tip fit test is `55:60:01:14:f0:01:00:2a:01:43:16`. W
 
 If the left earbud doesn’t fit, but the right does, we get this packet:
 
-```text
+```
 0000   55 00 01 0d e0 02 00 00 01 00
 ```
 
 If both earbuds fit:
 
-```text
+```
 0000   55 00 01 0d e0 02 00 00 00 00
 ```
 
@@ -126,7 +126,7 @@ We can make a good guess that the last two bytes represent 0 = good fit, 1 = bad
 
 If we look at the first few packets exchanged when a connection is made on the Android app, and experiment with sending them, we notice that sending `55:60:01:42:c0:00:00:03:e0:d1` gives us this reply, which contains the firmware version (1.0.1.101):
 
-```text
+```
 0000   55 60 01 42 40 09 00 03 31 2e 30 2e 31 2e 31 30   U`.B@...1.0.1.10
 0010   31 fa 36                                          1.6
 ```
@@ -135,7 +135,7 @@ The version number is 9 characters, so it’s possible the 6th byte `09` encodes
 
 And if we send `55:60:01:06:c0:00:00:05:90:dc`, we get this:
 
-```text
+```
 0000   55 60 01 06 40 88 00 05 09 32 2c 31 2c 31 2e 30   U`..@....2,1,1.0
 0010   2e 31 0a 32 2c 32 2c 31 2e 30 2e 31 2e 31 30 31   .1.2,2,1.0.1.101
 0020   0a 32 2c 34 2c 53 48 31 30 31 38 32 33 30 37 30   .2,4,SH101823070
@@ -152,7 +152,7 @@ That string starting with `SH101` is the serial number.
 
 If you open an RFCOMM channel 15 and listen for every incoming packet, you’ll notice that a packet is sent for every &ldquo;change&rdquo; to the device. For example, if I change the ANC, I get a packet starting with `55:00:01:03:e0`. Now, can I get the ANC status on demand, without there being a change? For this I looked at more packets sent during early communication, to see which got different responses when I changed the ANC. I found that when I sent `55:60:01:1e:c0:01:00:0c:03:98:19`, I get:
 
-```text
+```
 0000   55 60 01 1e 40 06 00 0c 01 07 00 02 04 00 10 7a
 ```
 
@@ -176,7 +176,7 @@ The Ear (2) has a number of different pinch/hold controls.
 
 Whenever we click on the controls for the left earbud, the app sends out `55:60:01:18:c0:00:00:51:39:21` and receives, for example, this in response:
 
-```text
+```
 0000   55 60 01 18 40 21 00 51 08 02 01 02 08 03 01 02
 0010   09 02 01 03 08 03 01 03 08 02 01 07 16 03 01 07
 0020   16 02 01 09 01 03 01 09 01 e0 30
@@ -184,29 +184,26 @@ Whenever we click on the controls for the left earbud, the app sends out `55:60:
 
 If we change one shortcut (set left double-pinch to skip forward), we get:
 
-```text
-0000   55 60 01 18 40 21 00 1d 08 02 01 02 09 03 01 02
+<pre class="z-code"><code>0000   55 60 01 18 40 21 00 <ins>1d</ins> 08 02 01 02 <ins>09</ins> 03 01 02
 0010   09 02 01 03 08 03 01 03 08 02 01 07 16 03 01 07
-0020   16 02 01 09 01 03 01 09 01 39 6d
-```
+0020   16 02 01 09 01 03 01 09 01 <ins>39</ins> <ins>6d</ins>
+</code></pre>
 
 We see changes on bytes 8 and 13 (`08` → `09`), and in the last two bytes. If we change left double-pinch to voice assistant, we get:
 
-```text
-0000   55 60 01 18 40 21 00 1d 08 02 01 02 0b 03 01 02
+<pre class="z-code"><code>0000   55 60 01 18 40 21 00 1d 08 02 01 02 <ins>0b</ins> 03 01 02
 0010   09 02 01 03 08 03 01 03 08 02 01 07 16 03 01 07
 0020   16 02 01 09 01 03 01 09 01 b9 6e
-```
+</code></pre>
 
 Compared to last time, only byte 13 is changed (to `0b`). I guess byte 13 represents the actual action.
 
 Let’s try setting triple pinch to skip forward:
 
-```text
-0000   55 60 01 18 40 21 00 1d 08 02 01 02 09 03 01 02
+<pre class="z-code"><code>0000   55 60 01 18 40 21 00 1d 08 02 01 02 0b 03 01 02
 0010   09 02 01 03 09 03 01 03 08 02 01 07 16 03 01 07
-0020   16 02 01 09 01 03 01 09 01 29 bc
-```
+0020   16 02 01 09 01 03 01 09 01 <ins>29</ins> bc
+</code></pre>
 
 This time the 21st byte is changed. If I set triple pinch to voice assistant, that 21st byte changes to `0b`.
 
@@ -240,7 +237,7 @@ And of shortcut actions and their encodings:
 
 Looking at the commands to change shortcuts now (this is to set left triple-pinch to skip forward):
 
-```text
+```
 0000   55 60 01 03 f0 05 00 59 01 02 01 03 09 de 71
 ```
 

@@ -18,44 +18,6 @@ draft = false
     window.init = init;
 </script>
 
-<script src="/js/three.min.js"></script>
-<script src="/js/OrbitControls.js"></script>
-<script>
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x1b1b1b);
-    scene.fog = new THREE.Fog(0x0, 1, 10000);
-    const light = new THREE.PointLight(0xffffff, 1)
-    const camera = new THREE.PerspectiveCamera(75, 1, 0.01, 1000);
-    camera.add(light);
-    const renderer = new THREE.WebGLRenderer();
-    camera.position.z = 0.6;
-    camera.position.y = 0.2;
-    console.log(camera.position);
-    renderer.setSize(512, 512);
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    function animate() {
-        requestAnimationFrame(animate);
-        controls.update();
-        renderer.render(scene, camera);
-    }
-    animate();
-</script>
-
-<script>
-    function getRandomInt(max) {
-        return Math.floor(Math.random() * max);
-    }
-    function generateSeed() {
-        const arr = [];
-        for (let i = 0; i < 8; i++) {
-            arr.push(getRandomInt(256));
-        }
-        return arr;
-    }
-</script>
-
-<script src="/js/alpine.min.js" defer></script>
-
 I watched this excellent video, [*Better Mountain Generators That Aren't Perlin Noise or Erosion*](https://www.youtube.com/watch?v=gsJHzBTPG0Y) by [Josh's Channel](https://www.youtube.com/@JoshsHandle). It discusses generating mountain heightmaps
 using a technique called [Diffusion-Limited Aggregation](https://en.wikipedia.org/wiki/Diffusion-limited_aggregation). The structures produced by this process are known as Brownian trees.
 
@@ -101,6 +63,44 @@ To get more interesting terrain, we superimpose a clamped and lightly-blurred ve
 ## Demonstration
 
 This is a _live_ demonstration. Play around with the sliders to immediately see your changes. To make it easier to isolate the effects of varying parameters, the seed is held constant — click "Randomize Seed" to generate from a new seed.
+
+<script src="/js/three.min.js"></script>
+<script src="/js/OrbitControls.js"></script>
+<script>
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1b1b1b);
+    scene.fog = new THREE.Fog(0x0, 1, 10000);
+    const light = new THREE.PointLight(0xffffff, 1)
+    const camera = new THREE.PerspectiveCamera(75, 1, 0.01, 1000);
+    camera.add(light);
+    const renderer = new THREE.WebGLRenderer();
+    camera.position.z = 0.6;
+    camera.position.y = 0.2;
+    console.log(camera.position);
+    renderer.setSize(512, 512);
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+</script>
+
+<script>
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
+    function generateSeed() {
+        const arr = [];
+        for (let i = 0; i < 8; i++) {
+            arr.push(getRandomInt(256));
+        }
+        return arr;
+    }
+</script>
+
+<script src="/js/alpine.min.js" defer></script>
 
 <div x-data="{
     seed: [1, 2, 3, 4, 5, 6, 7, 8],

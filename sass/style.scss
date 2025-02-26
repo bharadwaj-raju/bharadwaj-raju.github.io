@@ -139,6 +139,13 @@ body {
     --body-font: 'et-book', 'Cardo';
 }
 
+pre code ins {
+    /* background-color: color-mix(in srgb, var(--lightgreen) 30%, transparent); */
+    background-color: var(--lightgreen);
+    color: var(--text-highlighted);
+    text-decoration: none;
+}
+
 body {
     font-family: var(--body-font);
     font-weight: 400;
