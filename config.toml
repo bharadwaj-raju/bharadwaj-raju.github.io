@@ -13,10 +13,11 @@ build_search_index = true
 highlight_code = true
 highlight_theme = "css"
 smart_punctuation = true
+extra_syntaxes_and_themes = ["themes"]
 
 highlight_themes_css = [
-  { theme = "zenburn", filename = "syntax-theme-dark.css" },
-  { theme = "zenburn", filename = "syntax-theme-light.css" },
+  { theme = "rosepine", filename = "syntax-theme-dark.css" },
+  { theme = "rosepine", filename = "syntax-theme-light.css" },
 ]
 
 [extra]
