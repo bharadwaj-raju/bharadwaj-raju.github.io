@@ -63,36 +63,29 @@ body img.dark {
 
 .note {
     color: var(--text);
+    background-color: var(--note-type-bg);
     --note-type-bg: var(--foam-tr);
+    --note-type-color: var(--foam-darker);
+    border-color: var(--note-type-color);
 }
 
 .tip {
     --note-type-bg: var(--lightgreen-tr);
+    --note-type-color: var(--lightgreen);
 }
 
 .btw {
     --note-type-bg: var(--iris-muted-tr);
+    --note-type-color: var(--iris-muted);
 }
 
 .warning {
     --note-type-bg: var(--gold-muted-tr);
+    --note-type-color: var(--gold);
 }
 
 .note::before {
-    color: var(--foam-darker);
-    /* border-color: var(--foam-darker); */
-}
-
-.note.tip::before {
-    color: var(--lightgreen);
-}
-
-.note.btw::before {
-    color: var(--iris-muted);
-}
-
-.note.warning::before {
-    color: var(--gold);
+    color: var(--note-type-color);
 }
 
 .note a {

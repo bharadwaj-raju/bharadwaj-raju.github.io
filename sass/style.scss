@@ -166,11 +166,6 @@ abbr {
     font-size: 115%;
 }
 
-blockquote {
-    border-left: 1px solid var(--text);
-    padding-left: var(--content-gap);
-}
-
 main img {
     max-width: 100%;
 }
@@ -186,6 +181,24 @@ figure {
     figcaption {
         font-size: 1.1rem;
         text-align: center;
+    }
+}
+
+blockquote, figure.quote {
+    border-left: 1px solid var(--text);
+    padding-left: var(--content-gap);
+    text-align: left;
+    font-size: 90%;
+    line-height: 130%;
+}
+
+figure.quote {
+    figcaption {
+        text-align: right;
+        font-size: inherit;
+        &:before {
+            content: "— ";
+        }
     }
 }
 
@@ -408,13 +421,15 @@ table td {
 }
 
 .note {
-    background-color: var(--note-type-bg);
-    padding: 15px;
+    background-color: color-mix(in srgb, var(--note-type-bg), transparent 15%);
     border-radius: var(--radius);
     color: var(--text-highlighted);
     line-height: 130%;
-    margin-bottom: var(--content-gap)
+    margin-bottom: var(--content-gap);
+    border: 2px solid currentColor;
+    padding: 15px;
 }
+
 
 .note {
     --note-type-title: "Note";

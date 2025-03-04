@@ -51,7 +51,7 @@ Bluetooth didn’t work on the Android-x86 guest at first. I had to run these co
 # pm disable com.android.bluetooth
 # pm enable com.android.bluetooth
 # service call bluetooth_manager 6
-# hciconfig hci0 up</code></pre>
+# hciconfig hci0 up
 ```
 
 Try that if Bluetooth doesn’t work despite you enabling passthrough of the Bluetooth USB device.
