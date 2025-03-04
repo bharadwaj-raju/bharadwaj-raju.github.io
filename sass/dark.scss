@@ -15,7 +15,7 @@ body {
     /*--subtle: #908caa;*/
     --subtle: #b3b3b3;
     --highlight-low: #21202e;
-    --highlight-med: rgb(50, 50, 50);
+    --highlight-med: var(--dark-highlight-med);
     --highlight-high: #524f67;
     /*--border: #403d52;*/
     --border: var(--muted);
@@ -34,6 +34,7 @@ body .highlight {
 pre code ::selection,
 pre ::selection {
     background-color: var(--highlight-med);
+    color: unset;
 }
 
 input[type=text] {

@@ -132,6 +132,7 @@ body {
     --highlight: #dfdad9;
     --highlight-low: #f4ede8;
     --highlight-med: #dfdad9;
+    --dark-highlight-med: rgb(50, 50, 50);
     --highlight-high: #cecacd;
     --radius: 8px;
     --content-gap: 1.8rem;
@@ -236,8 +237,16 @@ a:visited {
 }
 
 ::selection {
-    background-color: var(--foam-darker);
+    background-color: var(--foam);
     color: var(--base-dark);
+}
+
+
+.highlight pre ::selection,
+pre code ::selection,
+pre ::selection {
+    background-color: var(--dark-highlight-med);
+    color: unset;
 }
 
 ol {
