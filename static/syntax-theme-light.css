@@ -3,7 +3,7 @@
  */
 
 .z-code {
- color: #c4c4c4;
+ color: #eeeeee;
  background-color: #171717;
 }
 
@@ -25,7 +25,7 @@ font-weight: bold;
  color: #f6c177;
 }
 .z-variable {
- color: #b3b3b3;
+ color: #eeeeee;
 }
 .z-keyword {
  color: #9ccfd8;

@@ -12,7 +12,7 @@
         <key>background</key>
         <string>#171717</string>
         <key>foreground</key>
-        <string>#c4c4c4</string>
+        <string>#eeeeee</string>
         <key>invisibles</key>
         <string>#1f1d2e</string>
         <key>lineHighlight</key>
@@ -88,7 +88,7 @@
       <key>settings</key>
       <dict>
         <key>foreground</key>
-        <string>#b3b3b3</string>
+        <string>#eeeeee</string>
       </dict>
     </dict>
     <dict>
