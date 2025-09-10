@@ -81,6 +81,38 @@
     font-display: swap;
 }
 
+@font-face {
+  font-family: 'Fantasque Sans Mono';
+  src: url('/fonts/FantasqueSansMono/FantasqueSansMono-Regular.woff2') format('woff2'),
+       url('/fonts/FantasqueSansMono/FantasqueSansMono-Regular.woff') format('woff'); /* Firefox >= 3.6, any other modern browser */
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fantasque Sans Mono';
+  src: url('/fonts/FantasqueSansMono/FantasqueSansMono-Bold.woff2') format('woff2'),
+       url('/fonts/FantasqueSansMono/FantasqueSansMono-Bold.woff') format('woff'); /* Firefox >= 3.6, any other modern browser */
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Fantasque Sans Mono';
+  src: url('/fonts/FantasqueSansMono/FantasqueSansMono-BoldItalic.woff2') format('woff2'),
+       url('/fonts/FantasqueSansMono/FantasqueSansMono-BoldItalic.woff') format('woff'); /* Firefox >= 3.6, any other modern browser */
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Fantasque Sans Mono';
+  src: url('/fonts/FantasqueSansMono/FantasqueSansMono-Italic.woff2') format('woff2'),
+       url('/fonts/FantasqueSansMono/FantasqueSansMono-Italic.woff') format('woff'); /* Firefox >= 3.6, any other modern browser */
+  font-weight: 400;
+  font-style: italic;
+}
+
 :root {
     --gap: 24px;
     --transition: 75ms;
@@ -370,9 +402,17 @@ h6 {
     }
 }
 
-pre,
+pre, code {
+    font-family: "Fantasque Sans Mono";
+}
+
 code {
-    font-size: 16px;
+    font-size: 21px;
+}
+
+pre,
+pre code {
+    font-size: 19px;
 }
 
 pre {
@@ -381,6 +421,13 @@ pre {
     max-height: 500px;
     overflow: scroll;
     line-height: 1.5rem;
+}
+
+pre code mark {
+    background-color: var(--gold-muted-tr);
+    color: unset;
+    width: 100%;
+    display: block;
 }
 
 table {
@@ -485,6 +532,10 @@ aside {
     font-size: 80%;
     position: relative;
     margin-bottom: var(--gap);
+}
+
+.sidenote code {
+    font-size: 90%;
 }
 
 /* Wide viewport */
