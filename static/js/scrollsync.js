@@ -28,7 +28,7 @@ window.onload = () => {
     let toc = document.getElementsByClassName("toc")[0];
   
     // highlight first one if visible
-    if (sections[0].getBoundingClientRect().top + window.scrollY < (window.innerHeight / 2)) {
+    if (sections.length >= 1 && sections[0].getBoundingClientRect().top + window.scrollY < (window.innerHeight / 2)) {
       links.forEach(link => link.classList.remove("active"));
       links[0].classList.add("active");
     }
