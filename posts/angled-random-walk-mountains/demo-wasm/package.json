@@ -1,0 +1,14 @@
+{
+  "name": "angled-random-walker-demo-wasm",
+  "version": "0.1.0",
+  "files": [
+    "angled_random_walker_demo_wasm_bg.wasm",
+    "angled_random_walker_demo_wasm.js",
+    "angled_random_walker_demo_wasm.d.ts"
+  ],
+  "module": "angled_random_walker_demo_wasm.js",
+  "types": "angled_random_walker_demo_wasm.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
