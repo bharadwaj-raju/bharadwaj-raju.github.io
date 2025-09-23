@@ -768,8 +768,18 @@ li p {
     margin-bottom: 10px;
 }
 
-.post-cards .post-card {
-    margin-bottom: var(--gap);
+.post-cards {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+
+    @media (max-width: 550px) {
+        gap: calc(2 * var(--gap));
+    }
+
+    @media (max-width: 400px) {
+        gap: calc(3 * var(--gap));
+    }
 }
 
 .post-card {
