@@ -785,7 +785,9 @@ li p {
 .post-card {
     display: grid;
     grid-template-columns: 64px 1fr;
-    grid-template-rows: 64px;
+    @media (min-width: 600px) {
+        grid-template-rows: 64px;
+    }
     /* border: 1px solid white; */
 }
 
@@ -829,6 +831,12 @@ li p {
     display: flex;
     flex-direction: column;
     padding-left: var(--gap);
-    justify-content: center;
+    @media (min-width: 600px) {
+        justify-content: center;
+    }
+    @media (max-width: 600px) {
+        /* HACK */
+        margin-top: -7px;
+    }
     gap: 5px;
 }
