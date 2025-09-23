@@ -2,6 +2,12 @@
 title = "Angled Random Walks for DLA-like Terrain Generation"
 date = 2024-08-03
 draft = false
+
+[taxonomies]
+category = ["procedural-generation"]
+
+[extra]
+image = "thumb.png"
 +++
 
 <script type="module">

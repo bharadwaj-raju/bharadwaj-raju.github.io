@@ -2,6 +2,9 @@
 title = "Creating a Linux controller for the Nothing Ear (2)"
 date = 2024-01-06
 draft = false
+
+[extra]
+image = "thumb.png"
 +++
 
 I bought a [Nothing Ear (2)](https://nothing.tech/products/ear-2), and I’m mostly happy with it. It comes 

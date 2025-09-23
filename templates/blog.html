@@ -1,15 +1,23 @@
 {% extends "base.html" %}
 
+{% import "postcard.html" as postcard %}
+
 {% block content %}
 <main>
   <h1 class="title">
     {{ section.title }}
   </h1>
-  <ul>
+  <div class="post-cards">
     <!-- If you are using pagination, section.pages will be empty. You need to use the paginator object -->
     {% for page in section.pages %}
-    <li><a href="{{ page.permalink | safe }}">{{ page.title }}</a></li>
+    <!-- <li><a href="{{ page.permalink | safe }}"> -->
+    <!-- {% if page.taxonomies.category %} -->
+      <!-- [{{page.taxonomies.category.0}}] -->
+    <!-- {% endif %} -->
+      <!-- {{ page.title }} -->
+      <!-- </a></li> -->
+      {{ postcard::postcard(page=page) }}
     {% endfor %}
-  </ul>
+  </div>
 </main>
 {% endblock content %}

@@ -1,6 +1,9 @@
 +++
 title = "Being in the Linux Kernel Mentorship"
 date = 2025-09-10
+
+[extra]
+image = "thumb.png"
 +++
 
 From March to August of this year, I have been a mentee in the Linux Foundation's [Linux Kernel Mentorship Program](https://wiki.linuxfoundation.org/lkmp) alongside my university studies.

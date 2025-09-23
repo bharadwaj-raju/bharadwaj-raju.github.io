@@ -4,6 +4,10 @@ base_url = "https://bharadwaj-raju.github.io"
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
 
+taxonomies = [
+  { name = "category", feed = false, render = false }
+]
+
 # Whether to build a search index to be used later on by a JavaScript library
 build_search_index = true
 
@@ -20,5 +24,11 @@ highlight_themes_css = [
   { theme = "rosepine", filename = "syntax-theme-light.css" },
 ]
 
-[extra]
+
+# [extra]
 # Put all your custom variables here
+
+[extra.taxonomies.category]
+procedural-generation = { title = "Procedural Generation" }
+kde = { title = "KDE" }
+kernel = { title = "Kernel" }

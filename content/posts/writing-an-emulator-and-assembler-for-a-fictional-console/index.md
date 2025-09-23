@@ -2,6 +2,9 @@
 title = "Writing an Emulator and Assembler for a Fictional Console"
 date = 2023-04-25
 draft = false
+
+[extra]
+image = "thumb.png"
 +++
 I was bored of emulating existing systems.
 

@@ -1,6 +1,12 @@
 +++
-title = "Generative Art using Stacked Sines"
+title = "Stacked Sines"
 date = 2025-09-13
+
+[taxonomies]
+category = ["procedural-generation"]
+
+[extra]
+image = "thumb.png"
 +++
 
 <script src="/js/alpine.min.js" defer></script>

@@ -767,3 +767,58 @@ li p {
     margin-top: 10px;
     margin-bottom: 10px;
 }
+
+.post-cards .post-card {
+    margin-bottom: var(--gap);
+}
+
+.post-card {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    grid-template-rows: 64px;
+    /* border: 1px solid white; */
+}
+
+.post-card a {
+    text-decoration: none;
+}
+
+.post-card-thumb, .post-card-nothumb {
+    width: 64px;
+    height: 64px;
+    /* border: 1px solid white; */
+}
+
+.post-card-thumb {
+    border: 1px solid var(--text);
+}
+
+.post-card-category {
+    font-variant: all-small-caps;
+    font-size: 18px;
+    height: 18px;
+    display: inline-block;
+    padding: 0;
+    font-family: "Fira";
+}
+
+.post-card-nothumb {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.post-card-nothumb-circle {
+    height: 10px;
+    width: 10px;
+    border-radius: 10px;
+    /* border: 1px solid var(--text); */
+}
+
+.post-card-right {
+    display: flex;
+    flex-direction: column;
+    padding-left: var(--gap);
+    justify-content: center;
+    gap: 5px;
+}
