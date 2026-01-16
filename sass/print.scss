@@ -1,0 +1,39 @@
+header, .toc {
+  display: none;
+}
+
+main {
+  max-width: 100%;
+  margin: 0;
+}
+
+h1 {
+  font-size: 30pt;
+}
+
+body {
+  font-size: 16pt;
+}
+
+pre {
+  background: #fff !important;
+}
+
+pre, pre code, pre span {
+  color: #000 !important;
+  max-height: unset;
+}
+
+a::after {
+  content: " (" attr(href) ")";
+}
+
+a.zola-anchor::after {
+  content: "";
+}
+
+.sidenote {
+  float: left;
+  display: block;
+  padding-left: 1em;
+}

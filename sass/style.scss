@@ -565,7 +565,7 @@ aside {
 }
 
 /* Wide viewport */
-@media (min-width: 1400px) {
+@media screen and (min-width: 1400px) {
     .sidenote {
         float: right;
         clear: right;
@@ -577,7 +577,7 @@ aside {
 }
 
 /* Narrow viewport */
-@media (max-width: 1400px) {
+@media print, (max-width: 1400px) {
     .sidenote {
         float: right;
         text-align: left;
