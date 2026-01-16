@@ -11,7 +11,7 @@
 <span class="post-card-category">{{ config.extra.taxonomies.category[page.taxonomies.category.0].title }}</span>
 {% endif %}
 
-<span class="post-card-title"><a href="{{ page.permalink | safe }}">{{ page.title }}</a></span>
+<span class="post-card-title"><a href="{{ page.permalink | safe }}">{{ page.title | safe }}</a></span>
 </div>
 
 </div>

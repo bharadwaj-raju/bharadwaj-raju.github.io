@@ -1,81 +1,136 @@
 @font-face {
-    font-family: "et-book";
-    src: url("/fonts/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot");
-    src: url("/fonts/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot?#iefix") format("embedded-opentype"), url("/fonts/et-book/et-book-roman-line-figures/et-book-roman-line-figures.woff") format("woff"), url("/fonts/et-book/et-book-roman-line-figures/et-book-roman-line-figures.ttf") format("truetype"), url("/fonts/et-book/et-book-roman-line-figures/et-book-roman-line-figures.svg#etbookromanosf") format("svg");
-    font-weight: normal;
+    font-family: "Junicode";
+    src: url("/fonts/Junicode/WOFF2/JunicodeVF-Roman.woff2");
+    font-weight: variable;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: "et-book";
-    src: url("/fonts/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot");
-    src: url("/fonts/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot?#iefix") format("embedded-opentype"), url("/fonts/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff") format("woff"), url("/fonts/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.ttf") format("truetype"), url("/fonts/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.svg#etbookromanosf") format("svg");
+    font-family: "Junicode";
+    src: url("/fonts/Junicode/WOFF2/JunicodeVF-Italic.woff2");
+    font-weight: variable;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Alegreya";
+    src: url("/fonts/alegreya-ht-pro/Alegreya-Regular.woff2");
+    font-weight: variable;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Alegreya";
+    src: url("/fonts/alegreya-ht-pro/Alegreya-Italic.woff2");
     font-weight: normal;
     font-style: italic;
     font-display: swap;
 }
 
 @font-face {
-    font-family: "et-book";
-    src: url("/fonts/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot");
-    src: url("/fonts/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot?#iefix") format("embedded-opentype"), url("/fonts/et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff") format("woff"), url("/fonts/et-book/et-book-bold-line-figures/et-book-bold-line-figures.ttf") format("truetype"), url("/fonts/et-book/et-book-bold-line-figures/et-book-bold-line-figures.svg#etbookromanosf") format("svg");
+    font-family: "Alegreya";
+    src: url("/fonts/alegreya-ht-pro/Alegreya-Bold.woff2");
     font-weight: bold;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: "Cardo";
-    src: url("/fonts/Cardo/Cardo-Regular.ttf");
+    font-family: "Alegreya";
+    src: url("/fonts/alegreya-ht-pro/Alegreya-BoldItalic.woff2");
+    font-weight: bold;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Alegreya SC";
+    src: url("/fonts/alegreya-ht-pro/AlegreyaSC-Regular.woff2");
+    font-weight: normal;
+    font-style: normal;
+    font-variant: small-caps;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Alegreya SC";
+    src: url("/fonts/alegreya-ht-pro/AlegreyaSC-Bold.woff2");
+    font-weight: bold;
+    font-style: normal;
+    font-variant: small-caps;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Alegreya Sans";
+    src: url("/fonts/alegreya-sans-ht/AlegreyaSans-Regular.woff2");
     font-weight: normal;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: "Cardo";
-    src: url("/fonts/Cardo/Cardo-Italic.ttf");
+    font-family: "Alegreya Sans";
+    src: url("/fonts/alegreya-sans-ht/AlegreyaSans-Bold.woff2");
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Alegreya Sans";
+    src: url("/fonts/alegreya-sans-ht/AlegreyaSans-Italic.woff2");
     font-weight: normal;
     font-style: italic;
     font-display: swap;
 }
 
 @font-face {
-    font-family: "Cardo";
-    src: url("/fonts/Cardo/Cardo-Bold.ttf");
+    font-family: "Alegreya Sans";
+    src: url("/fonts/alegreya-sans-ht/AlegreyaSans-BoldItalic.woff2");
     font-weight: bold;
-    font-style: normal;
+    font-style: italic;
     font-display: swap;
 }
 
 @font-face {
-    font-family: "Fira";
-    src: url("/fonts/Fira_Sans/FiraSans-Regular.ttf");
+    font-family: "Alegreya Sans SC";
+    src: url("/fonts/alegreya-sans-ht/AlegreyaSansSC-Regular.woff2");
     font-weight: normal;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: "Fira";
-    src: url("/fonts/Fira_Sans/FiraSans-Bold.ttf");
+    font-family: "Alegreya Sans SC";
+    src: url("/fonts/alegreya-sans-ht/AlegreyaSansSC-Medium.woff2");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Alegreya Sans SC";
+    src: url("/fonts/alegreya-sans-ht/AlegreyaSansSC-Bold.woff2");
     font-weight: bold;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: "Fira";
-    src: url("/fonts/Fira_Sans/FiraSans-Italic.ttf");
+    font-family: "Alegreya Sans SC";
+    src: url("/fonts/alegreya-sans-ht/AlegreyaSansSC-Italic.woff2");
     font-weight: normal;
     font-style: italic;
     font-display: swap;
 }
 
 @font-face {
-    font-family: "Fira";
-    src: url("/fonts/Fira_Sans/FiraSans-BoldItalic.ttf");
+    font-family: "Alegreya Sans SC";
+    src: url("/fonts/alegreya-sans-ht/AlegreyaSansSC-BoldItalic.woff2");
     font-weight: bold;
     font-style: italic;
     font-display: swap;
@@ -119,8 +174,8 @@
 }
 
 body {
-    /*--base: #faf4ed;*/
-    --base: #fff;
+    --base: #faf4ed;
+    /* --base: #F4F3EF; */
     --base-dark: #1b1b1b;
     /*--surface: #fffaf3;*/
     --surface: rgba(0, 0, 0, 0.05);
@@ -137,6 +192,7 @@ body {
     --foam: #9ccfd8;
     --foam-darker: #c;
     --foam-tr: #9ccfd82b;
+    --foam-less-tr: #9ccfd8aa;
     --lightgreen: #9cd8a0;
     --lightgreen-tr: #9cd8a02b;
     --rose-muted: #ebbcba;
@@ -169,7 +225,10 @@ body {
     --radius: 8px;
     --content-gap: 1.8rem;
     --slider-height: 8px;
-    --body-font: 'et-book', 'Cardo';
+    --body-font: 'Alegreya', 'Junicode';
+    --body-sc-font: 'Alegreya SC';
+    --body-sans-font: 'Alegreya Sans';
+    --body-sans-sc-font: 'Alegreya Sans SC';
 }
 
 pre code ins {
@@ -181,13 +240,15 @@ pre code ins {
 
 body {
     font-family: var(--body-font);
-    font-weight: 400;
+    font-weight: 450;
     font-size: 1.6rem;
     line-height: 140%;
     color: var(--text);
     padding: 0;
     margin: 0;
     background-color: var(--base);
+    font-variant-ligatures: common-ligatures;
+    font-variant-numeric: oldstyle-nums;
 }
 
 .frontpage {
@@ -195,8 +256,22 @@ body {
 }
 
 abbr {
-    font-variant: all-small-caps;
-    font-size: 115%;
+    font-family: var(--body-sc-font), var(--body-font);
+    font-variant-caps: small-caps;
+    font-variant-numeric: lining-nums;
+    letter-spacing: 0.05em;
+}
+
+p abbr, .sidenote abbr { 
+    font-weight: normal;
+}
+
+.sidenote abbr {
+    font-family: var(--body-sans-sc-font), var(--body-sans-font);
+}
+
+h1 abbr, h2 abbr, h3 abbr, h4 abbr, h5 abbr, h6 abbr {
+    font-style: normal;
 }
 
 main img {
@@ -288,7 +363,7 @@ pre ::selection {
 
 ol {
     counter-reset: ol-counter;
-    list-style: none;
+    /* list-style: none; */
 }
 
 ol>li {
@@ -296,7 +371,7 @@ ol>li {
     margin-bottom: calc(0.5 * var(--gap));
 }
 
-ol>li::before {
+/*ol>li::before {
     counter-increment: ol-counter;
     content: counter(ol-counter);
     color: var(--muted);
@@ -312,7 +387,7 @@ ol>li::before {
     place-items: center;
     line-height: 0.7em;
     padding: 0.05em;
-}
+}*/
 
 ul {
     list-style-type: disc;
@@ -394,7 +469,7 @@ h6 {
         }
     }
 
-    :hover {
+    a:hover {
         &:before {
             content: "§";
             display: block;
@@ -404,6 +479,7 @@ h6 {
             border: none;
             margin-left: -1em;
             margin-top: -4px;
+            font-style: normal;
         }
     }
 }
@@ -487,7 +563,7 @@ table td {
 .dateline {
     margin-top: -18px;
     font-size: 18px;
-    font-family: Fira
+    font-family: var(--body-sans-font);
 }
 
 .note::before {
@@ -558,6 +634,7 @@ aside {
     font-size: 80%;
     position: relative;
     margin-bottom: var(--gap);
+    font-family: var(--body-sans-font);
 }
 
 .sidenote code {
@@ -619,6 +696,7 @@ body {
     content: counter(sidenote-counter)".";
     position: relative;
     vertical-align: baseline;
+    font-family: var(--body-font);
     font-size: 0.9em;
     font-weight: bold;
     margin-right: 8px;
@@ -638,6 +716,7 @@ body {
     top: -0.7rem;
     font-weight: bold;
     margin-left: 0.2rem;
+    padding-right: 0.3em;
 }
 
 .sidenote-ref::after {
@@ -708,9 +787,9 @@ body {
     position: fixed;
     left: 0;
     top: 0;
-    // font-size: 1.2rem;
-    font-family: Fira;
-    // font-variant: all-small-caps;
+    font-family: var(--body-sans-sc-font), var(--body-sans-font);
+    font-weight: 500;
+    letter-spacing: 0.05em;
     max-width: 330px;
     margin-left: calc(-1 * var(--gap));
     background: 0 0 !important;
@@ -743,16 +822,17 @@ body {
 
         a {
             display: inline-block;
-            height: 25px;
-            font-size: 16px;
+            height: 35px;
+            font-size: 20px;
             color: var(--subtle);
             text-decoration: none;
+            font-variant: small-caps;
 
             transition: all var(--transition);
 
             &.active {
                 font-weight: bold;
-                font-size: 17px;
+                font-size: 21px;
                 color: var(--gold-text);
             }
 
@@ -797,10 +877,11 @@ li p {
 
 .post-card-category {
     font-variant: all-small-caps;
-    font-size: 18px;
+    font-size: 20px;
+    letter-spacing: 0.05em;
     display: inline-block;
     padding: 0;
-    font-family: "Fira";
+    font-family: var(--body-sans-sc-font), var(--body-sans-font);
 }
 
 .post-card-nothumb {
@@ -825,4 +906,9 @@ li p {
     }
     line-height: 1;
     gap: 5px;
+}
+
+.tombstone::after {
+    content: "❚";
+    color: var(--pine);
 }

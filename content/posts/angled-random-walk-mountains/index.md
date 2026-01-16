@@ -1,5 +1,5 @@
 +++
-title = "Angled Random Walks for DLA-like Terrain Generation"
+title = "Angled Random Walks for <abbr>DLA</abbr>-like Terrain Generation"
 date = 2024-08-03
 draft = false
 
@@ -288,8 +288,8 @@ This is a _live_ demonstration. Play around with the sliders to immediately see 
             </div>
         </div>
     </div>
-    <p>And in 3D:</p>
-    {% marginnote() %}Please excuse the plainness. I don't yet know enough 3D graphics to make it nicely Earth-colored _and_ give it lighting and shading such that you can actually see the details.{% end %}
+    <p>And in <abbr>3D</abbr>:</p>
+    {% marginnote() %}Please excuse the plainness. I don't yet know enough <abbr>3D</abbr> graphics to make it nicely Earth-colored _and_ give it lighting and shading such that you can actually see the details.{% end %}
     <div id="demo-3d-whole-container">
         <div x-init="canvas3dContainer = $el" id="demo-3d-container"></div>
         <div id="demo-3d-controls">

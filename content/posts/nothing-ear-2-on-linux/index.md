@@ -40,7 +40,7 @@ Finally I thought of running Android-x86 in a VM, giving it Bluetooth, and analy
 
 At this point I should thank [Michal Jirků](https://wejn.org/about/). While searching about snooping on 
 Android-x86 traffic from the host, I found their series of posts on doing a very similar thing for their Yamaha 
-YAS-207. That confirmed that I had indeed stumbled on a productive approach.
+<abbr>YAS-207</abbr>. That confirmed that I had indeed stumbled on a productive approach.
 
 ## Snooping on Bluetooth from Android-x86
 

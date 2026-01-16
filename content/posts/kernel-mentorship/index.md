@@ -557,4 +557,3 @@ Being in the <abbr>LKMP</abbr> was as rewarding as it was challenging. If you're
 
 Finally… thank you to Shuah Khan, Ricardo B. Marlière, and Javier Carrasco!
 
-<br><br><br>

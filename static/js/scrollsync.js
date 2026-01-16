@@ -4,6 +4,7 @@ window.onload = () => {
     const links = [...document.querySelectorAll('.toc a')];
     const hashes = links.map(link => "#" + link.getAttribute("href").split("#")[1]);
     const sections = links.map(link => document.querySelector("#" + link.getAttribute("href").split("#")[1]));
+    const tombstone = document.querySelector('.tombstone');
 
     function getLinkForSection(section) {
       if (section === null) {
@@ -23,6 +24,16 @@ window.onload = () => {
         return;
       }
       link.classList.add("active");
+    }
+
+    function isElementInViewport(el) {
+      const rect = el.getBoundingClientRect();
+      return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+      );
     }
 
     // two observers: one for the vertical median, one for the bottom edge, since we want to
@@ -54,6 +65,10 @@ window.onload = () => {
     }
   
     function setCurrent(_e) {
+      if (isElementInViewport(tombstone)) {
+        highlightLink(links[links.length - 1]);
+        return;
+      }
       const median = window.innerHeight / 2;
       let activeSection = null;
       for (const section of sections) {
@@ -68,6 +83,11 @@ window.onload = () => {
     }
   
     sections.forEach(h => { observeHtags.observe(h); observeHtags2.observe(h); });
+    observeHtags2.observe(tombstone);
+
+    document.addEventListener('scrollend', (_e) => {
+      setCurrent(_e);
+    });
   
     // if we click a toc link, highlight that regardless of its scroll position
     links.forEach(link => {
