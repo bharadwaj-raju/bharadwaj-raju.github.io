@@ -201,6 +201,7 @@ body {
     --red-lighter: #F6423C;
     --crimson: #C91D42;
     --crimson-darker: #9C1633;
+    --maroon: #582235;
     --iris: #c4a7e7;
     --iris-muted: #D1BBEC;
     /* WCAG AA */
@@ -214,6 +215,7 @@ body {
     /* Not actually the Rosé Pine light text color, but this one (Moon Overlay color) has far better contrast while still fitting in with the theme */
     /*--text: #393552;*/
     --text: #252237;
+    --heading-text: var(--maroon);
     --text-highlighted: var(--text);
     --text-light: #e2e2e2;
     --link: var(--pine);
@@ -463,10 +465,11 @@ h3,
 h4,
 h5,
 h6 {
+    color: var(--heading-text);
     line-height: 1.2;
 
     a {
-        color: var(--text);
+        color: var(--heading-text);
         text-decoration: none;
 
         &:visited {
