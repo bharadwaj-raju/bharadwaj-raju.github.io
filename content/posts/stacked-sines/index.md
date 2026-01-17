@@ -132,6 +132,7 @@ For each stage of dampening, reduce the amplitude by a constant, decrease the st
 <script type="text/javascript">
 function perturbation_y(ptb, x) {
   //console.log(ptb);
+  if (!ptb) return 0;
   if (x < ptb.start || (x - ptb.start) / ptb.width >= Math.PI) {
     return 0;
   }
