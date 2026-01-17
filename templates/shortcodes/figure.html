@@ -1,4 +1,4 @@
-<figure {% if float %}style="float:{{ float }};" class="figure-floating"{% endif %}>
+<figure {% if float %}class="figure-floating figure-floating-{{float}}"{% endif %}>
     <img src="{{ src }}" alt="{{ alt }}"
     {% if width %}width="{{ width }}" {% endif %}
     {% if height %}height="{{ height }}" {% endif %}

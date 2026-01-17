@@ -290,9 +290,18 @@ figure img {
 }
 
 figure {
-    &:not(.figure-floating) {
-        margin-bottom: calc(2 * var(--gap));
+    @media (min-width: 700px) {
+        &.figure-floating-right {
+            float: right;
+        }
+        &.figure-floating-left {
+            float: left;
+        }
+        &:not(.figure-floating) {
+            margin-bottom: calc(2 * var(--gap));
+        }
     }
+    
     text-align: center;
 
     figcaption {
