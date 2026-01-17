@@ -83,6 +83,8 @@ Watching that, I wanted to experiment with some procedural generation along thos
 
 I thought about and tried some ways of representing and propagating perturbations like in the video, and my eventual idea was to generate pieces of sine waves for each horizontal line, and to "dampen" them to generate their ripple effects on all other lines.
 
+<p style="clear: both"></p>
+
 Sine waves make this pretty nice, mathematically. If you have a function of `y(x) = amplitude * sin((x - start) / width)`, you can vary the `amplitude` and `width` parameters to control the size.
 
 <div x-data="{
