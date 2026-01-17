@@ -290,7 +290,9 @@ figure img {
 }
 
 figure {
-    margin-bottom: calc(2 * var(--gap));
+    &:not(.figure-floating) {
+        margin-bottom: calc(2 * var(--gap));
+    }
     text-align: center;
 
     figcaption {
