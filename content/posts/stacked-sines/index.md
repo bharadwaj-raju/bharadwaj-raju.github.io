@@ -75,11 +75,11 @@ image = "thumb.png"
 }
 </style>
 
-I watched some videos by [Sterk Hvalros](https://www.youtube.com/@SterkHvalros), who makes a lot of art around the ideas of ripples and waves.
+[Sterk Hvalros](https://www.youtube.com/@SterkHvalros) creates a lot of art around the ideas of ripples and waves.
 
 {% figure(src="sterk_hvalros_you_are_not_a_robot_5d5AmwolYpo_2.jpg" alt="You are not a robot, by Sterk Hvalros." height=500 float="right") %}[*"You are not a robot"*](//youtu.be/5d5AmwolYpo){% end %}
 
-Watching that, I wanted to experiment with some procedural generation along those lines.
+Watching the creation of these pieces, I wanted to experiment with some procedural generation along those lines.
 
 I thought about and tried some ways of representing and propagating perturbations like in the video, and my eventual idea was to generate pieces of sine waves for each horizontal line, and to "dampen" them to generate their ripple effects on all other lines.
 
