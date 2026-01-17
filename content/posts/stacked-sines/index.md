@@ -70,27 +70,14 @@ image = "thumb.png"
 .demo-controls-container {
     display: flex;
     flex-direction: column;
-    gap: calc(var(--gap) / 2);
+    gap: calc(var(--gap));
     flex-grow: 1;
-}
-
-.gen-btn {
-    background: none;
-    border: none;
-    color: inherit;
-    font-size: inherit;
-    font-family: inherit;
-    text-decoration: underline;
-    font-style: italic;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 15px;
 }
 </style>
 
 I watched some videos by [Sterk Hvalros](https://www.youtube.com/@SterkHvalros), who makes a lot of art around the ideas of ripples and waves.
 
-{% figure(src="sterk_hvalros_you_are_not_a_robot_5d5AmwolYpo_2.jpg" alt="You are not a robot, by Sterk Hvalros." height=500 float="right") %}["You are not a robot"](//youtu.be/5d5AmwolYpo){% end %}
+{% figure(src="sterk_hvalros_you_are_not_a_robot_5d5AmwolYpo_2.jpg" alt="You are not a robot, by Sterk Hvalros." height=500 float="right") %}[*"You are not a robot"*](//youtu.be/5d5AmwolYpo){% end %}
 
 Watching that, I wanted to experiment with some procedural generation along those lines.
 
@@ -136,6 +123,7 @@ for (var x = 0; x < $refs.canvas.width; x++) {
   </div>
 </div>
 
+{{ break() }}
 
 Then, the idea is that you generate a set of such sine perturbations at random lines and at random starting positions, and add their effect (`y(x)`) to each line, dampened by how far the line being rendered is from the origin line of that perturbation.
 
@@ -302,7 +290,7 @@ for (var line = 0; line < lines; line++) {
     <div class="demo-container-left">
       <canvas x-ref="canvas" id="sine-canvas" width=600 height=600></canvas>
     </div>
-    <div class="demo-controls-container">
+    <div class="demo-controls-container" style="height: 602px">
       <div class="demo-control">
         <label for="min_amp">Min amplitude: <span x-text="min_amp"></span></label>
         <input type="range" id="min_amp" x-model.number="min_amp" min="1" max="50" step="1">
@@ -331,7 +319,7 @@ for (var line = 0; line < lines; line++) {
         <label for="damp">Amplitude reduction: <span x-text="damp"></span></label>
         <input type="range" id="damp" x-model.number="damp" min="-2" max="2" step="0.5">
       </div>
-      <button @click="seed = Math.random()" class="gen-btn">Randomize Seed</button>
+      <button @click="seed = Math.random()" style="margin-top: auto" class="demo-control-button">Randomize Seed</button>
     </div>
   </div>
 </div>

@@ -171,21 +171,21 @@ This is a _live_ demonstration. Play around with the sliders to immediately see 
     scene.add(mesh3d);
 ">
     <style>
-        #demo-container {
+        .demo-container {
             margin-top: calc(3 * var(--gap));
             display: flex;
             gap: var(--gap);
         }
-        #demo-3d-container {
+        .demo-3d-container {
             padding: 0px;
             margin: var(--gap) auto;
             width: 512px;
         }
-        #demo-3d-container canvas {
+        .demo-3d-container canvas {
             border: 1px solid var(--text);
             cursor: grab;
         }
-        #demo-3d-controls {
+        .demo-3d-controls {
             display: flex;
             justify-content: center;
             gap: var(--gap);
@@ -195,29 +195,29 @@ This is a _live_ demonstration. Play around with the sliders to immediately see 
             flex-direction: column;
         }
         @media (max-width: 1400px) {
-            #demo-container {
+            .demo-container {
                 flex-direction: column;
                 padding: 0;
                 border: none;
                 width: 100% !important;
             }
-            #demo-canvas {
+            .demo-canvas {
                 width: 100% !important;
                 min-width: 100% !important;
                 max-width: 100% !important;
                 height: unset !important;
             }
-            #demo-3d-whole-container, #demo-3d-controls, #demo-3d-container {
+            .demo-3d-whole-container, #demo-3d-controls, #demo-3d-container {
                 width: 100% !important;
             }
         }
-        #demo-container-left {
+        .demo-container-left {
             width: 512px;
             min-width: 512px;
             max-width: 512px;
             text-align: center;
         }
-        #demo-canvas {
+        .demo-canvas {
             border: 1px solid var(--text);
             background-color: var(--base-dark);
             width: 512px;
@@ -230,13 +230,13 @@ This is a _live_ demonstration. Play around with the sliders to immediately see 
             flex-direction: column;
             width: 100%;
         }
-        #demo-controls-container {
+        .demo-controls-container {
             display: flex;
             flex-direction: column;
             gap: calc(var(--gap) / 2);
             flex-grow: 1;
         }
-        #gen-btn {
+        .gen-btn {
             background: none;
             border: none;
             color: inherit;
@@ -250,12 +250,11 @@ This is a _live_ demonstration. Play around with the sliders to immediately see 
     </style>
     {% marginnote() %}This demonstration uses the same implementation linked above, through a <abbr>WASM</abbr> layer. The source code of the <abbr>WASM</abbr> module can be found [here](https://github.com/bharadwaj-raju/angled-random-walker-demo-wasm).{% end %}
     {% marginnote() %}Eight initial walkers are used here, aimed at each of the cardinal and ordinal directions. The library lets you customize the number and angles of the walkers, if you wish.{% end %}
-    <div id="demo-container">
-        <div id="demo-container-left">
-            <canvas x-init="canvas2dContext = $el.getContext('2d')" id="demo-canvas" width="512" height="512"></canvas>
-            <button @click="seed = generateSeed()" id="gen-btn">Randomize Seed</button>
+    <div class="demo-container">
+        <div class="demo-container-left">
+            <canvas x-init="canvas2dContext = $el.getContext('2d')" class="demo-canvas" width="512" height="512"></canvas>
         </div>
-        <div id="demo-controls-container">
+        <div class="demo-controls-container" style="height: 512px">
             <div class="demo-control">
                 <label for="max-long-age">Max long walker age: <span x-text="longAge"></span></label>
                 <input type="range" id="max-long-age" x-model="longAge" min="1" max="100" step="1">
@@ -273,26 +272,27 @@ This is a _live_ demonstration. Play around with the sliders to immediately see 
                 <input type="range" id="max-children" x-model="maxChildren" min="1" max="5"  step="1">
             </div>
             <div class="demo-control">
-                <label for="short-branch-freq">Short branch every: <span x-text="shortBranchFreq"></span> steps</label>
+                <label for="short-branch-freq">Short branch every: <span x-text="shortBranchFreq"></span><span class="demo-control-unit">steps</span></label>
                 <input type="range" id="short-branch-freq" x-model="shortBranchFreq" min="1" max="70"  step="1">
             </div>
             <div class="demo-control">
-                <label for="long-angle-divergence">Max long child divergence: <span x-text="longDivergence"></span>&nbsp;π</label>
+                <label for="long-angle-divergence">Max long child divergence: <span x-text="longDivergence"></span><span class="demo-control-unit">π</span></label>
                 <input type="range" id="long-angle-divergence" x-model="longDivergence" min="0.1" max="1.0"
                     step="0.05">
             </div>
             <div class="demo-control">
-                <label for="short-angle-divergence">Max short child divergence: <span x-text="shortDivergence"></span>&nbsp;π</label>
+                <label for="short-angle-divergence">Max short child divergence: <span x-text="shortDivergence"></span><span class="demo-control-unit">π</span></label>
                 <input type="range" id="short-angle-divergence" x-model="shortDivergence" min="0.1" max="1.0"
                     step="0.05">
             </div>
+            <button @click="seed = generateSeed()" style="margin-top: auto" class="demo-control-button">Randomize Seed</button>
         </div>
     </div>
     <p>And in <abbr>3D</abbr>:</p>
     {% marginnote() %}Please excuse the plainness. I don't yet know enough <abbr>3D</abbr> graphics to make it nicely Earth-colored _and_ give it lighting and shading such that you can actually see the details.{% end %}
-    <div id="demo-3d-whole-container">
-        <div x-init="canvas3dContainer = $el" id="demo-3d-container"></div>
-        <div id="demo-3d-controls">
+    <div class="demo-3d-whole-container">
+        <div x-init="canvas3dContainer = $el" class="demo-3d-container"></div>
+        <div class="demo-3d-controls">
             <div class="demo-3d-control">
                 <label for="blur-radius">Blur radius: <span x-text="blurRadius"></span></label>
                 <input type="range" id="blur-radius" x-model="blurRadius" min="1" max="32" value="20" step="1">

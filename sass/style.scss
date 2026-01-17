@@ -51,7 +51,6 @@
     src: url("/fonts/alegreya-ht-pro/AlegreyaSC-Regular.woff2");
     font-weight: normal;
     font-style: normal;
-    font-variant: small-caps;
     font-display: swap;
 }
 
@@ -60,7 +59,6 @@
     src: url("/fonts/alegreya-ht-pro/AlegreyaSC-Bold.woff2");
     font-weight: bold;
     font-style: normal;
-    font-variant: small-caps;
     font-display: swap;
 }
 
@@ -555,6 +553,58 @@ pre code mark {
     color: unset;
     width: 100%;
     display: block;
+}
+
+.demo-controls-container,
+.demo-3d-controls {
+    color: var(--subtle);
+}
+
+.demo-control, .demo-3d-control {
+    font-family: var(--body-sc-font), var(--body-font);
+    letter-spacing: 0.05em;
+    &:hover {
+        color: var(--text);
+    }
+    font-variant-caps: small-caps;
+    font-variant-numeric: tabular-nums;
+
+    label {
+        display: flex;
+        span:first-of-type {
+            margin-left: auto;
+            margin-right: 0.2em;
+        }
+        span.demo-control-unit {
+            font-family: var(--body-font);
+            font-variant-caps: normal;
+        }
+    }
+}
+
+.demo-control-button {
+    background: none;
+    border: 1px solid var(--text);
+    color: var(--text);
+    font-family: var(--body-sc-font), var(--body-font);
+    font-variant-caps: small-caps;
+    letter-spacing: 0.05em;
+    font-size: inherit;
+
+    transition: all var(--transition);
+    &:hover {
+        transition: all var(--transition);
+        border-color: var(--base);
+        background: var(--text);
+        color: var(--base);
+    }
+}
+
+.visual-break {
+    text-align: center;
+    margin-top: calc(2 * var(--gap));
+    margin-bottom: calc(2 * var(--gap));
+    color: var(--subtle);
 }
 
 table {
