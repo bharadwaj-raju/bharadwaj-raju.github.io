@@ -1,5 +1,7 @@
-<figure>
-    <img src="{{ src }}" alt="{{ alt }}" {% if width %}width="{{ width }}" {% endif %} {% if height
-        %}height="{{ height }}" {% endif %} />
+<figure {% if float %}style="float:{{ float }};"{% endif %}>
+    <img src="{{ src }}" alt="{{ alt }}"
+    {% if width %}width="{{ width }}" {% endif %}
+    {% if height %}height="{{ height }}" {% endif %}
+    />
     <figcaption>{{ body | markdown(inline=true) | safe }}</figcaption>
 </figure>
