@@ -24,11 +24,14 @@ I was invited to a Discord server for the mentees, and each Wednesday we had onl
 
 I decided to focus on fixing bugs, and to that end I tried to fix bugs from [syzkaller](https://syzkaller.appspot.com/). It's a hosted public dashboard for bugs found via [the syz fuzzing system](https://github.com/google/syzkaller/blob/master/docs/syzbot.md). These are mostly kernel warnings, and reports from <abbr>KASAN</abbr> (Kernel Address Sanitizer), <abbr>KMSAN</abbr> (Memory), and <abbr>UBSAN</abbr> (Undefined Behavior).
 
-This was hard. Not all bugs had working reproducers, or were comprehensible to someone new to the subsystem. Most of the viable ones would be solved by an actual kernel engineer faster than I could reproduce and investigate it. There were even false positives.
+This was hard. Not all bugs had working reproducers, or were comprehensible to someone new to the subsystem — to say nothing of the false positives. Most of the viable ones would be solved by an actual kernel engineer faster than I could reproduce and investigate it.
 
 Despite this, I managed to get some bugfixes in bcachefs, from syzkaller. I'll try to recount the process of investigating and fixing each bug in detail, in the hopes that it might be useful to others looking to fix kernel bugs.
 
 ## Fixes in bcachefs
+
+I picked bcachefs mostly by chance; it happened to have several syzkaller reports when
+I looked at the dashboard, and they seemed approachable.
 
 ### Atomic Contexts and Blocking Functions
 
@@ -88,7 +91,7 @@ Call Trace:
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 ```
 
-Now, where do we look for the bug? The first thing to look for is the last bcachefs function in the call trace, because it's a reasonable assumption that the bug is in bcachefs code and not in core kernel memory management code. That is `bch2_printbuf_make_room`.
+Now, where do we look for the bug? The first thing to look for is the last bcachefs function in the call trace, because it is a reasonable assumption that the bug is in bcachefs code and not in core kernel memory management code. That is `bch2_printbuf_make_room`.
 
 Right, but what is an "invalid context" anyway? {% sidenote(ref="Researching the error message") %}[Even good old StackOverflow suffices.](https://stackoverflow.com/questions/16538824/bug-sleeping-function-called-from-invalid-context-at-mm-slub-c1719){% end %} will tell us that "invalid" here is "atomic". You can't call a function which may sleep from an atomic context.
 
