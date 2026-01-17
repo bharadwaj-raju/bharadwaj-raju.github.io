@@ -241,7 +241,7 @@ pre code ins {
 body {
     font-family: var(--body-font);
     font-weight: 450;
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     line-height: 140%;
     color: var(--text);
     padding: 0;
@@ -512,6 +512,10 @@ code {
     font-size: 21px;
 }
 
+p > code {
+    white-space: nowrap;
+}
+
 pre,
 pre code {
     font-size: 19px;
@@ -631,7 +635,6 @@ aside {
 }
 
 .sidenote {
-    font-size: 80%;
     position: relative;
     margin-bottom: var(--gap);
     font-family: var(--body-sans-font);
@@ -703,7 +706,7 @@ body {
 }
 
 .sidenote {
-    font-size: 80%;
+    font-size: 20px;
     line-height: 140%;
 }
 
