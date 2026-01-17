@@ -216,6 +216,8 @@ for (var line = 0; line < lines; line++) {
   </div>
 </div>
 
+{{ break() }}
+
 Thus far this looks simplistic, but when adding multiple randomly-generated sines to one image, the effect is cool.
 
 <script>
