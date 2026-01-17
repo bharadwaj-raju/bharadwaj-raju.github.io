@@ -90,7 +90,7 @@ image = "thumb.png"
 
 I watched some videos by [Sterk Hvalros](https://www.youtube.com/@SterkHvalros), who makes a lot of art around the ideas of ripples and waves.
 
-{% figure(src="sterk_hvalros_you_are_not_a_robot_5d5AmwolYpo_2.jpg" alt="You are not a robot, by Sterk Hvalros." height=500) %}["You are not a robot"](//youtu.be/5d5AmwolYpo){% end %}
+{% figure(src="sterk_hvalros_you_are_not_a_robot_5d5AmwolYpo_2.jpg" alt="You are not a robot, by Sterk Hvalros." height=500 float="right") %}["You are not a robot"](//youtu.be/5d5AmwolYpo){% end %}
 
 Watching that, I wanted to experiment with some procedural generation along those lines.
 
@@ -115,7 +115,7 @@ for (var x = 0; x < $refs.canvas.width; x++) {
   ctx.fillRect(x, y, 1, 1);
 }       
 ">
-  <div class="demo-container" id="demo-container-single">
+  <div class="demo-container" id="demo-container-single" style="clear: both;">
     <div class="demo-container-left">
       <canvas x-ref="canvas" id="sine-stacked-canvas" width=600 height=200></canvas>
     </div>
