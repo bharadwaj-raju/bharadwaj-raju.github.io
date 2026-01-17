@@ -300,6 +300,9 @@ figure {
         &:not(.figure-floating) {
             margin-bottom: calc(2 * var(--gap));
         }
+        &.figure-floating {
+            margin-top: 0;
+        }
     }
     
     text-align: center;
