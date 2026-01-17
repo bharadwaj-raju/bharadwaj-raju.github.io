@@ -196,6 +196,11 @@ body {
     --lightgreen: #9cd8a0;
     --lightgreen-tr: #9cd8a02b;
     --rose-muted: #ebbcba;
+    --red: #E3120B;
+    --red-darker: #CC100A;
+    --red-lighter: #F6423C;
+    --crimson: #C91D42;
+    --crimson-darker: #9C1633;
     --iris: #c4a7e7;
     --iris-muted: #D1BBEC;
     /* WCAG AA */
@@ -864,6 +869,10 @@ li p {
     @media (min-width: 600px) {
         grid-template-rows: 64px;
     }
+    &:hover .post-card-thumb {
+        transition: all var(--transition);
+        border-color: var(--gold-muted);
+    }
 }
 
 .post-card a {
@@ -876,6 +885,7 @@ li p {
 }
 
 .post-card-thumb {
+    transition: all var(--transition);
     border: 1px solid var(--text);
 }
 
@@ -914,5 +924,5 @@ li p {
 
 .tombstone::after {
     content: "❚";
-    color: var(--pine);
+    color: var(--gold-muted);
 }
