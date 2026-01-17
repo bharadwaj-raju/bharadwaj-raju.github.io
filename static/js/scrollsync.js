@@ -2,6 +2,11 @@
 
 window.onload = () => {
     const links = [...document.querySelectorAll('.toc a')];
+
+    if (links.length === 0) {
+      return;
+    }
+    
     const hashes = links.map(link => "#" + link.getAttribute("href").split("#")[1]);
     const sections = links.map(link => document.querySelector("#" + link.getAttribute("href").split("#")[1]));
     const tombstone = document.querySelector('.tombstone');
