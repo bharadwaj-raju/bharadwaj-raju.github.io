@@ -103,3 +103,7 @@ body img.dark {
 .note a {
     color: var(--foam);
 }
+
+.tombstone::after {
+    color: var(--gold-muted);
+}
