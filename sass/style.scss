@@ -173,6 +173,7 @@
 
 body {
     --base: #faf4ed;
+    --surface-subtle-highlight: #fbf0e4;
     /* --base: #F4F3EF; */
     --base-dark: #1b1b1b;
     /*--surface: #fffaf3;*/
@@ -380,7 +381,7 @@ a {
 .highlight pre ::selection,
 pre code ::selection,
 pre ::selection {
-    background-color: var(--dark-highlight-med);
+    background-color: var(--surface);
     color: unset;
 }
 
@@ -552,7 +553,8 @@ pre code {
 
 pre {
     padding: 10px;
-    border-radius: var(--radius);
+    /* border-radius: var(--radius); */
+    /* border-left: 2px solid var(--gold-muted); */
     max-height: 500px;
     overflow: overlay;
     line-height: 1.5rem;

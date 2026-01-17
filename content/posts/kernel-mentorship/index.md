@@ -103,7 +103,7 @@ What are the offending functions? Let's look at what `bch2_printbuf_make_room` i
 ```c,hl_lines=9
 int bch2_printbuf_make_room(struct printbuf *out, unsigned extra)
 {
-	/* snip */
+	…
   
 	/*
 	 * Note: output buffer must be freeable with kfree(), it's not required
@@ -273,14 +273,14 @@ static int validate_bset_keys(struct bch_fs *c, struct btree *b,
 			 struct printbuf *err_msg)
 {
 
-    /* snip */
+		…
 
 		if (!write)
 			bch2_bkey_compat(b->c.level, b->c.btree_id, version,
 				    BSET_BIG_ENDIAN(i), write,
 				    &b->format, k);
 
-    /* snip */
+		…
 
 }
 ```
@@ -294,7 +294,7 @@ int bch2_btree_node_read_done(struct bch_fs *c, struct bch_dev *ca,
 			      struct bch_io_failures *failed,
 			      struct printbuf *err_msg)
 {
-    /* snip */
+		…
     
 		ret = validate_bset(c, ca, b, i, b->written, sectors, READ, failed, err_msg);
 		if (ret)
@@ -307,7 +307,7 @@ int bch2_btree_node_read_done(struct bch_fs *c, struct bch_dev *ca,
 		if (ret)
 			goto fsck_err;
 
-    /* snip */
+		…
 }
 ```
 
@@ -322,7 +322,7 @@ static int validate_bset(struct bch_fs *c, struct bch_dev *ca,
 			 struct bch_io_failures *failed,
 			 struct printbuf *err_msg)
 {
-    /* snip */
+		…
 
 		btree_err_on(bch2_bkey_format_invalid(c, &bn->format, write, &buf1),
 			     -BCH_ERR_btree_node_read_err_bad_node,
@@ -332,7 +332,7 @@ static int validate_bset(struct bch_fs *c, struct bch_dev *ca,
 			     (printbuf_reset(&buf2),
 			      bch2_bkey_format_to_text(&buf2, &bn->format), buf2.buf));
 
-    /* snip */
+		…
 }
 ```
 
@@ -341,7 +341,7 @@ So there is a function to validate the format after all! So, the question become
 The answer is in `btree_err_on`, and how it deals with `btree_node_bad_format` errors.
 
 {% marginnote() %}[`fs/bcachefs/btree_io.c`](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/bcachefs/btree_io.c?id=785cdec46e9227f9433884ed3b436471e944007c#n656){% end %}
-```c
+```c,hl_lines=8
 #define btree_err(type, c, ca, b, i, k, _err_type, msg, ...)		\
 ({									\
 	int _ret = __btree_err(type, c, ca, b, i, k, write,		\
@@ -380,7 +380,7 @@ static int __btree_err(int ret,
 	if (c->recovery.curr_pass == BCH_RECOVERY_PASS_scan_for_btree_nodes)
 		return -BCH_ERR_fsck_fix;
 
-  /* snip */
+	…
 }
 ```
 
@@ -481,7 +481,7 @@ static int journal_replay_entry_early(struct bch_fs *c,
 				entry->btree_id, BTREE_ID_NR_MAX))
 			return 0;
 
-    /* snip */
+		…
 }
 ```
 
