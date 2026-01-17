@@ -6,14 +6,16 @@ body {
     --surface: var(--surface-dark);
     --overlay: var(--overlay-dark);
     --text: var(--text-light);
+    --text-highlighted: #000;
+    --text-contrasted: #fff;
     --gold-text: var(--gold-muted);
     /*--text-highlighted: #252237;*/
-    --text-highlighted: #000;
     --link: #9ccfd8;
     /*--muted: #6e6a86;*/
     --muted: rgb(100, 100, 100);
     /*--subtle: #908caa;*/
     --subtle: #b3b3b3;
+    --less-subtle: #c3c3c3;
     --highlight-low: #21202e;
     --highlight-med: var(--dark-highlight-med);
     --highlight-high: #524f67;
@@ -48,6 +50,12 @@ input[type=text] {
 input[type=text]:focus {
     background-color: var(--overlay) !important;
     border: none !important;
+}
+
+.demo-control-button {
+    &:hover {
+        background: var(--text);
+    }
 }
 
 ::selection {

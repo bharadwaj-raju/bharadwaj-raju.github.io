@@ -215,12 +215,14 @@ body {
     --text: #252237;
     --heading-text: var(--maroon);
     --text-highlighted: var(--text);
+    --text-contrasted: var(--text);
     --text-light: #e2e2e2;
     --link: var(--pine);
     --link-highlighted: var(--pine-even-darker);
     --muted: #9893a5;
     /*--subtle: #797593; */
     --subtle: #6D6986;
+    --less-subtle: #606070;
     /* WCAG AA */
     --highlight: #dfdad9;
     --highlight-low: #f4ede8;
@@ -562,14 +564,14 @@ pre code mark {
 
 .demo-controls-container,
 .demo-3d-controls {
-    color: var(--subtle);
+    color: var(--less-subtle);
 }
 
 .demo-control, .demo-3d-control {
     font-family: var(--body-sc-font), var(--body-font);
     letter-spacing: 0.05em;
     &:hover {
-        color: var(--text);
+        color: var(--text-contrasted);
     }
     font-variant-caps: small-caps;
     font-variant-numeric: tabular-nums;
@@ -600,7 +602,7 @@ pre code mark {
     &:hover {
         transition: all var(--transition);
         border-color: var(--base);
-        background: var(--text);
+        background: var(--base-dark);
         color: var(--base);
     }
 }
