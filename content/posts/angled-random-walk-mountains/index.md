@@ -27,7 +27,7 @@ image = "thumb.png"
 I watched this excellent video, [*Better Mountain Generators That Aren't Perlin Noise or Erosion*](https://www.youtube.com/watch?v=gsJHzBTPG0Y) by [Josh's Channel](https://www.youtube.com/@JoshsHandle). It discusses generating mountain heightmaps
 using a technique called [Diffusion-Limited Aggregation](https://en.wikipedia.org/wiki/Diffusion-limited_aggregation). The structures produced by this process are known as Brownian trees.
 
-{% figure(src="Brownian_tree.gif" alt="Brownian tree") %}Growing Brownian tree. Animation by [あるうぃんす](https://commons.wikimedia.org/wiki/File:Brownian_tree.gif).{% end %}
+{% figure(src="Brownian_tree.gif" alt="Brownian tree" float="left") %}Growing Brownian tree.<br>Animation by [あるうぃんす](https://commons.wikimedia.org/wiki/File:Brownian_tree.gif).{% end %}
 
 In <abbr>DLA</abbr>, we start with a seed typically placed at the center. At each step, we randomly place points on the grid and then random-walk them until they hit an existing particle, at which point they are frozen there. This is, of course, very inefficient. The video describes a good technique to get it to be faster, by starting with a small grid and doing a {% sidenote(ref="crisp upscale") %}This upscale isn't done directly on the pixels — instead, we keep track of which pixel sticks to which, and use that graph to populate a larger grid.{% end %} after the grid is filled to a certain degree, and repeating the process until we get to the desired size.
 
