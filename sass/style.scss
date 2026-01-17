@@ -447,6 +447,11 @@ header {
     z-index: 2;
 }
 
+#logo-tilde {
+    font-weight: bolder;
+    margin-right: 0.05em;
+}
+
 #logo-full {
     opacity: 0;
     transition: all var(--transition);
