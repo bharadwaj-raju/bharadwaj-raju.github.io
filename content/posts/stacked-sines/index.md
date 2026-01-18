@@ -154,7 +154,9 @@ for (var x = 0; x < $refs.canvas.width; x++) {
 
 Then, the idea is that you generate a set of such sine perturbations at random lines and at random starting positions, and add their effect (`y(x)`) to each line, dampened by how far the line being rendered is from the origin line of that perturbation.
 
-For each stage of dampening, reduce the amplitude by a constant, decrease the start position by 3 units, and increase the width by 2 units. That lets it spread out while still being on-center.
+{% marginnote() %}The choice to increase width by 2 units is arbitrary.{% end %}
+{% marginnote() %}Still, whatever our choice for the increase in width, we can calculate the corresponding decrease in starting coordinate which will keep the peaks aligned by equating `(x-s)/w` and `(x-s')/w'` both to `π/2`.{% end %}
+For each stage of dampening, reduce the amplitude by a constant, increase the width by 2 units, and decrease the start position by π units. That lets it spread out while still being on-center.
 
 <script type="text/javascript">
 function perturbation_y(ptb, x) {
@@ -178,7 +180,7 @@ function dampen(ptb, stages, amplitude_reduction) {
   return {
     amplitude: ptb.amplitude - (amplitude_reduction * stages),
     width: ptb.width + (2 * stages),
-    start: ptb.start - (3 * stages),
+    start: ptb.start - (Math.PI * stages),
     direction: ptb.direction,
   };
 }

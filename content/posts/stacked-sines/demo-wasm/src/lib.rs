@@ -6,18 +6,19 @@ use wasm_bindgen::prelude::*;
 
 #[derive(Clone, Copy)]
 struct Perturbation {
-    start: u32,
+    start: f32,
     amplitude: f32,
-    width: u32,
+    width: f32,
     up: bool,
 }
 
 impl Perturbation {
     fn dy(&self, x: u32) -> f32 {
+        let x = x as f32;
         if self.amplitude == 0.0 {
             return 0.0;
         }
-        let theta = ((x - self.start) as f32) / (self.width as f32);
+        let theta = (x - self.start) / self.width;
         if x < self.start || theta >= f32::consts::PI {
             return 0.0;
         }
@@ -39,8 +40,8 @@ impl Perturbation {
             } else {
                 self.amplitude - (amp_reduction * stages as f32)
             },
-            width: self.width + (2 * stages),
-            start: self.start.saturating_sub(3 * stages),
+            width: self.width + (2 * stages) as f32,
+            start: self.start - (f32::consts::PI * stages as f32),
             up: self.up,
         }
     }
@@ -95,9 +96,9 @@ pub fn generate(
         let mut rand_dir = Xoshiro256PlusPlus::seed_from_u64(rand_meta_dir.r#gen());
         for _i in 0..rand_num_per_line.gen_range(min_per_line..=max_per_line) {
             ptbs_by_line[line].push(Perturbation {
-                start: rand_start.gen_range(0..size as u32),
+                start: rand_start.gen_range(0..size as u32) as f32,
                 amplitude: rand_amp.gen_range(min_amp..=max_amp) as f32,
-                width: rand_width.gen_range(min_width..=max_width),
+                width: rand_width.gen_range(min_width..=max_width) as f32,
                 up: rand_dir.gen_bool(0.5),
             });
         }
