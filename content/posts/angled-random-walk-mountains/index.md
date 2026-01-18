@@ -285,7 +285,7 @@ This is a _live_ demonstration. Play around with the sliders to immediately see 
                 <input type="range" id="short-angle-divergence" x-model="shortDivergence" min="0.1" max="1.0"
                     step="0.05">
             </div>
-            <button @click="seed = generateSeed()" style="margin-top: auto" class="demo-control-button">Randomize Seed</button>
+            <button x-bind:title="seed" @click="seed = generateSeed()" style="margin-top: auto" class="demo-control-button">Randomize Seed</button>
         </div>
     </div>
     <p>And in <abbr>3D</abbr>:</p>
