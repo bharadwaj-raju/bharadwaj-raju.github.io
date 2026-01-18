@@ -9,8 +9,33 @@ category = ["procedural-generation"]
 image = "thumb.png"
 +++
 
+<script>
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
+    function generateSeed() {
+        const arr = [];
+        for (let i = 0; i < 8; i++) {
+            arr.push(getRandomInt(256));
+        }
+        return arr;
+    }
+</script>
+
+<script type="module">
+    import init, { hello, generate } from './demo-wasm/pkg/demo_wasm.js';
+    async function run() {
+        await init();
+        const result = hello();
+        console.log("hello from WASM: ", result);
+        if (result !== 42)
+            throw new Error("wasm hello doesn't work!");
+    }
+    window.generate = generate;
+    window.init = init;
+</script>
+
 <script src="/js/alpine.min.js" defer></script>
-<script src="/js/seedrandom.min.js"></script>
 
 <style>
 .demo-container {
@@ -220,14 +245,7 @@ for (var line = 0; line < lines; line++) {
 
 Thus far this looks simplistic, but when adding multiple randomly-generated sines to one image, the effect is cool.
 
-<script>
-function randrange(gen, min, max) {
-  return Math.round((gen() * (max - min + 1)) + min);
-}
-</script>
-
 <div x-data="{
-  seed: 42,
   min_amp: 10,
   max_amp: 25,
   min_width: 10,
@@ -236,66 +254,25 @@ function randrange(gen, min, max) {
   max_per_line: 3,
   damp: 1,
   lines: 60,
-  seed: 421137,
+  seed: [203, 174, 240, 244, 80, 8, 38, 1],
+  async getImageData() {
+    await window.init();
+    return new ImageData(new Uint8ClampedArray(window.generate(600, this.min_amp, this.max_amp, this.min_width, this.max_width, this.min_per_line, this.max_per_line, this.damp, this.lines, this.seed)), 600, 600);
+  }
 }" x-effect="
-const rand_num_per_line = new Math.seedrandom(seed);
-const rand_meta_width = new Math.seedrandom(seed);
-const rand_meta_amp = new Math.seedrandom(seed);
-const rand_meta_start = new Math.seedrandom(seed);
-const rand_meta_direction = new Math.seedrandom(seed);
-const ctx = $refs.canvas.getContext('2d');
-ctx.clearRect(0, 0, $refs.canvas.width, $refs.canvas.height);
-ctx.fillStyle = 'rgb(255 255 255)';
-const base_ptb = {
-  start: start,
-  amplitude: amplitude,
-  width: width,
-};
-const ptbs_on_line = [];
-for (var line = 0; line < lines; line++) {
-  let ptbs = [];
-  let rand_width = new Math.seedrandom(rand_meta_width.int32());
-  let rand_amp = new Math.seedrandom(rand_meta_amp.int32());
-  let rand_start = new Math.seedrandom(rand_meta_start.int32());
-  let rand_direction = new Math.seedrandom(rand_meta_direction.int32());
-  for (var i = 0; i < randrange(rand_num_per_line, min_per_line, max_per_line); i++) {
-    ptbs.push({
-      start: randrange(rand_start, 0, $refs.canvas.width),
-      amplitude: randrange(rand_amp, min_amp, max_amp),
-      width: randrange(rand_width, min_width, max_width),
-      direction: (rand_direction.quick() > 0.5) ? 'down' : 'up',
-    });
-  }
-  //console.log(ptbs);
-  ptbs_on_line.push([...ptbs]);
-}
-for (var line = 0; line < lines; line++) {
-  let ptbs_affecting_line = [];
-  for (var other_line = 0; other_line < lines; other_line++) {
-    let delta_line = Math.abs(line - other_line);
-    for (let ptb of ptbs_on_line[other_line]) {
-      let ptb_d = dampen(ptb, delta_line, damp);
-      if (ptb_d !== null) {
-        ptbs_affecting_line.push(ptb_d);
-      }
-    }
-  }
-  y = ($refs.canvas.height - (lines * 8)) / 2 + (line * 8) + (max_amp);
-  for (var x = 0; x < $refs.canvas.width; x++) {
-    let dy = 0;
-    for (let ptb of ptbs_affecting_line) {
-      //console.log(ptb);
-      dy += perturbation_y(ptb, x);
-    }
-    ctx.fillRect(x, y + dy, 1, 1);
-  }
-}
+  const depends = [min_amp, max_amp, min_width,
+                   max_width, min_per_line,
+                   max_per_line,
+                   damp, lines, seed];
+  const ctx = $refs.canvas.getContext('2d');
+  ctx.putImageData(await getImageData(), 0, 0);
 ">
+{% marginnote() %}This demonstration uses a Rust + WASM implementation. The source code can be found [here](https://github.com/bharadwaj-raju/bharadwaj-raju.github.io/tree/main/content/posts/stacked-sines/demo-wasm/).{% end %}
   <div class="demo-container" id="demo-container-stacking">
     <div class="demo-container-left">
       <canvas x-ref="canvas" id="sine-canvas" width=600 height=600></canvas>
     </div>
-    <div class="demo-controls-container" style="height: 602px">
+    <div x-data class="demo-controls-container" style="height: 602px">
       <div class="demo-control">
         <label for="min_amp">Min amplitude: <span x-text="min_amp"></span></label>
         <input type="range" id="min_amp" x-model.number="min_amp" min="1" max="50" step="1">
@@ -324,7 +301,7 @@ for (var line = 0; line < lines; line++) {
         <label for="damp">Amplitude reduction: <span x-text="damp"></span></label>
         <input type="range" id="damp" x-model.number="damp" min="-2" max="2" step="0.5">
       </div>
-      <button @click="seed = Math.random()" style="margin-top: auto" class="demo-control-button">Randomize Seed</button>
+      <button x-bind:title="seed" @click="seed = generateSeed()" style="margin-top: auto" class="demo-control-button">Randomize Seed</button>
     </div>
   </div>
 </div>
