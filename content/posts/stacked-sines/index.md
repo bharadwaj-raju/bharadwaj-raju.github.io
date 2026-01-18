@@ -104,7 +104,7 @@ image = "thumb.png"
 [Sterk Hvalros](https://www.youtube.com/@SterkHvalros) creates a lot of art around the ideas of ripples and waves, and documents his process of making these pieces.
 
 
-Watching this, I wanted to experiment with some procedural generation along those lines.
+Watching them, I wanted to experiment with some procedural generation along those lines.
 
 I thought about and tried some ways of representing and propagating perturbations like in the video, and my eventual idea was to generate pieces of sine waves for each horizontal line, and to "dampen" them to generate their ripple effects on all other lines.
 
