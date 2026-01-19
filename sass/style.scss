@@ -729,7 +729,7 @@ aside {
 }
 
 /* Wide viewport */
-@media screen and (min-width: 1400px) {
+@media screen and (min-width: 1200px) {
     .sidenote {
         float: right;
         clear: right;
@@ -741,7 +741,7 @@ aside {
 }
 
 /* Narrow viewport */
-@media print, (max-width: 1400px) {
+@media (max-width: 1200px) {
     .sidenote {
         float: right;
         text-align: left;
@@ -749,6 +749,17 @@ aside {
         width: 100%;
         margin: 1rem 0;
         padding-left: 15%;
+    }
+
+    .sidenote.marginnote {
+        padding: 0 10%;
+        width: unset;
+        float: none;
+        display: block;
+    }
+
+    .sidenote::before {
+        margin-left: 10%;
     }
 }
 
@@ -767,6 +778,7 @@ aside {
         overflow-wrap: break-word;
         white-space: pre-wrap;
     }
+
 }
 
 /* Sidenote counter */

@@ -460,7 +460,9 @@ static inline bool __btree_node_pinned(struct btree_cache *bc, struct btree *b)
 
 But… what are the valid values for `btree_id`? Where does it come from, and where is it validated, if anywhere?
 
-{% marginnote() %}With some more forethought, you could save time by assuming that a validation check, if it existed, would probably be in the form of `btree_id\s+(>|<)` and search for that.{% end %}There are many ways you could try to research these questions. What I did was just search for `btree_id` in the codebase and scan through for interesting instances. I found this:
+There are many ways you could try to research these questions. What I did was just search for `btree_id` in the codebase and scan through for interesting instances.{% marginnote() %}With some more forethought, you could save time by assuming that a validation check, if it existed, would probably be in the form of `btree_id\s+(>|<)` and search for that.{% end %}
+
+I found this:
 
 {% marginnote() %}[`fs/bcachefs/recovery.c`](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/fs/bcachefs/recovery.c?id=900241a5cc15e6e0709a012051cc72d224cd6a6e#n469){% end %}
 ```c,hl_lines=12-15
