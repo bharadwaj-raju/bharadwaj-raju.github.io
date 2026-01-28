@@ -1,0 +1,79 @@
+.z-code {
+ color: var(--text);
+ background-color: var(--surface-subtle-highlight);
+}
+
+.z-comment, .z-punctuation.z-comment {
+ color: var(--less-subtle);
+ font-style: italic;
+}
+.z-punctuation.z-terminator {
+ color: var(--muted);
+}
+.z-string, .z-punctuation.z-definition.z-string {
+ color: var(--gold-muted);
+}
+.z-constant.z-numeric {
+ color: var(--gold-muted);
+ font-weight: bold;
+}
+.z-constant.z-language {
+ color: var(--gold-muted);
+font-weight: bold;
+}
+.z-constant.z-character, .z-constant.z-other {
+ color: var(--crimson);
+}
+.z-variable {
+ color: var(--text);
+}
+.z-keyword {
+ color: var(--pine);
+}
+.z-storage {
+ color: var(--pine);
+}
+.z-storage.z-type {
+ color: var(--pine);
+}
+.z-entity.z-name.z-class {
+ color: #31748f;
+ font-weight: bold;
+}
+.z-entity.z-other.z-inherited-class {
+ color: #31748f;
+}
+.z-entity.z-name.z-function {
+ color: var(--text);
+ font-weight: bold;
+}
+.z-variable.z-parameter {
+ color: var(--text);
+}
+.z-entity.z-name.z-tag {
+ color: var(--pine);
+font-weight: bold;
+}
+.z-entity.z-other.z-attribute-name {
+ color: var(--text);
+}
+.z-support.z-function {
+ color: #d7827e;
+ font-weight: bold;
+}
+.z-support.z-constant {
+ color: var(--gold);
+ font-weight: bold;
+}
+.z-support.z-type, .z-support.z-class {
+ color: #9ccfd8;
+ font-weight: bold;
+}
+
+.z-punctuation {
+ color: var(--muted);
+}
+
+.z-keyword.z-operator {
+ color: var(--crimson);
+}

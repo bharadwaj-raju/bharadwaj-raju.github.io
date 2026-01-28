@@ -1,0 +1,16 @@
+[package]
+name = "demo-wasm"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = "0.2.108"
+rand = { version = "0.8.5", default-features = false, features = ["alloc"] }
+rand_xoshiro = "0.6.0"
+
+[build-dependencies]
+wasm-bindgen-cli = "0.2.108"
+wasm-pack = "0.13.1"

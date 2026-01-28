@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://bharadwaj-raju.github.io/</loc>
+    </url>
+    <url>
+        <loc>https://bharadwaj-raju.github.io/posts/</loc>
+    </url>
+    <url>
+        <loc>https://bharadwaj-raju.github.io/posts/angled-random-walk-mountains/</loc>
+        <lastmod>2024-08-03</lastmod>
+    </url>
+    <url>
+        <loc>https://bharadwaj-raju.github.io/posts/kernel-mentorship/</loc>
+        <lastmod>2025-09-10</lastmod>
+    </url>
+    <url>
+        <loc>https://bharadwaj-raju.github.io/posts/nothing-ear-2-on-linux/</loc>
+        <lastmod>2024-01-06</lastmod>
+    </url>
+    <url>
+        <loc>https://bharadwaj-raju.github.io/posts/stacked-sines/</loc>
+        <lastmod>2025-09-13</lastmod>
+    </url>
+    <url>
+        <loc>https://bharadwaj-raju.github.io/posts/writing-an-emulator-and-assembler-for-a-fictional-console/</loc>
+        <lastmod>2023-04-25</lastmod>
+    </url>
+</urlset>
