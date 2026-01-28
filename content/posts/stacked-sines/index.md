@@ -35,7 +35,7 @@ image = "thumb.png"
     window.init = init;
 </script>
 
-<script src="/js/alpine.min.js" defer></script>
+<script src="/js/alpine.js" defer></script>
 
 <style>
 .demo-container {

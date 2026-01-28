@@ -106,7 +106,7 @@ This is a _live_ demonstration. Play around with the sliders to immediately see 
     }
 </script>
 
-<script src="/js/alpine.min.js" defer></script>
+<script src="/js/alpine.js" defer></script>
 
 <div x-data="{
     seed: [1, 2, 3, 4, 5, 6, 7, 8],
