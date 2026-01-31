@@ -879,27 +879,18 @@ body {
         transition: all var(--transition);
     }
 
-    .sidenote-number:hover .sidenote {
-        border-color: var(--gold-muted);
-    }
-
     .sidenote-number:hover::after,
     .sidenote-ref:hover .sidenote-number::after {
         color: var(--gold-muted);
     }
 
-    .sidenote-ref:hover .sidenote {
-        border-color: var(--gold-muted);
-    }
-
-    .sidenote-ref:hover .sidenote::after {
-        color: var(--gold);
-    }
-
     .sidenote-number, .sidenote-ref {
-        &:hover, &:active, &:focused {
-            .sidenote {
-                border: 2px solid var(--gold-muted);
+        &:hover {
+            & .sidenote {
+                &::before {
+                    color: var(--gold-muted);
+                }
+                border-color: var(--gold-muted);
             }
         }
     }
