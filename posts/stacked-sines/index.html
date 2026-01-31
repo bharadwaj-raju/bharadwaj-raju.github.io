@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/icon.png" type="image/png">
+  <link rel="stylesheet" href="https://bharadwaj-raju.github.io/style.css?h=fd1cd5b3f23e99f3a0ff">
+  <link rel="stylesheet" href="https://bharadwaj-raju.github.io/print.css?h=9191ac8d6abd85d76080"
+    media="print">
+  <link rel="stylesheet" href="https://bharadwaj-raju.github.io/dark.css?h=54559654853c22f12773"
+    media="screen and (prefers-color-scheme: dark)">
+  
+  <link rel="preload" href="/fonts/alegreya-ht-pro/Alegreya-Regular.woff2" as="font" type="font/woff2"
+    crossorigin="anonymous" />
+  <link rel="preload" href="/fonts/alegreya-sans-ht/AlegreyaSans-Regular.woff2" as="font" crossorigin="anonymous" />
+  <link rel="preload" href="/fonts/alegreya-sans-ht/AlegreyaSansSC-Bold.woff2" as="font" crossorigin="anonymous" />
+  <link rel="stylesheet" type="text/css" href="/syntax-theme-dark.css" media="(prefers-color-scheme: dark)" />
+  <link rel="stylesheet" type="text/css" href="/syntax-theme-light.css" media="(prefers-color-scheme: light)" />
+
+  <title>Stacked Sines \  ~bharadwaj</title>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="/" id="logo"><span id="logo-tilde">~</span><span id="logo-full">bharadwaj</span></a>
+      <div id="menu">
+        <a href="/posts/">Posts</a>
+      </div>
+    </nav>
+  </header>
+  <section class="section">
+    <div class="container">
+      
+
+<main>
+  <h1 class="title">
+    Stacked Sines
+  </h1>
+  <p class="dateline subtitle">2025-09-13</p>
+  <script>
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
+    function generateSeed() {
+        const arr = [];
+        for (let i = 0; i < 8; i++) {
+            arr.push(getRandomInt(256));
+        }
+        return arr;
+    }
+</script>
+<script type="module">
+    import init, { hello, generate } from './demo-wasm/pkg/demo_wasm.js';
+    async function run() {
+        await init();
+        const result = hello();
+        console.log("hello from WASM: ", result);
+        if (result !== 42)
+            throw new Error("wasm hello doesn't work!");
+    }
+    window.generate = generate;
+    window.init = init;
+</script>
+<script src="/js/alpine.js" defer></script>
+<style>
+.demo-container {
+    margin-top: calc(3 * var(--gap));
+    display: flex;
+    gap: var(--gap);
+}
+
+@media (max-width: 1500px) {
+    .demo-container {
+        flex-direction: column;
+        padding: 0;
+        border: none;
+        width: 100% !important;
+    }
+    
+    .demo-container canvas {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+        height: unset !important;
+    }
+}
+
+#demo-container-single .demo-container-left {
+    width: 600px;
+    min-width: 600px;
+    max-width: 600px;
+    text-align: center;
+}
+
+.demo-container canvas {
+    border: 1px solid var(--text);
+    background-color: var(--base-dark);
+}
+
+#demo-container-single canvas {
+    width: 600px;
+    min-width: 600px;
+    max-width: 600px;
+    height: 200px;
+}
+
+#demo-container-stacked canvas {
+    width: 600px;
+    min-width: 600px;
+    max-width: 600px;
+    height: 600px;
+}
+
+.demo-control {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.demo-controls-container {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--gap));
+    flex-grow: 1;
+}
+</style>
+<figure class="figure-floating figure-floating-right">
+    <img src="sterk_hvalros_you_are_not_a_robot_5d5AmwolYpo_2.jpg" alt="You are not a robot, by Sterk Hvalros."
+    
+    height="500" 
+    />
+    <figcaption><a href="//youtu.be/5d5AmwolYpo"><em>“You are not a robot”</em></a></figcaption>
+</figure>
+<p><a href="https://www.youtube.com/@SterkHvalros">Sterk Hvalros</a> creates a lot of art around the ideas of ripples and waves, and documents his process of making these pieces.</p>
+<p>Watching them, I wanted to experiment with some procedural generation along those lines.</p>
+<p>I thought about and tried some ways of representing and propagating perturbations like in the video, and my eventual idea was to generate pieces of sine waves for each horizontal line, and to “dampen” them to generate their ripple effects on all other lines.</p>
+<p style="clear: both"></p>
+<p>Sine waves make this pretty nice, mathematically. If you have a function of <code>y(x) = amplitude * sin((x - start) / width)</code>, you can vary the <code>amplitude</code> and <code>width</code> parameters to control the size.</p>
+<div x-data="{
+  clip: true,
+  start: 280,
+  amplitude: 15,
+  width: 20,
+}" x-effect="
+const ctx = $refs.canvas.getContext('2d');
+ctx.clearRect(0, 0, $refs.canvas.width, $refs.canvas.height);
+ctx.fillStyle = 'rgb(255 255 255)';
+for (var x = 0; x < $refs.canvas.width; x++) {
+  y = ($refs.canvas.height / 2);
+  if (!clip || !(x < start || (x - start) / width >= Math.PI)) {
+    y += -amplitude * Math.sin((x - start) / width);
+  }
+  ctx.fillRect(x, y, 1, 1);
+}       
+">
+  <div class="demo-container" id="demo-container-single" style="clear: both;">
+    <div class="demo-container-left">
+      <canvas x-ref="canvas" id="sine-stacked-canvas" width=600 height=200></canvas>
+    </div>
+    <div class="demo-controls-container">
+      <div class="demo-control">
+        <label for="start">Start: <span x-text="start"></span></label>
+        <input type="range" id="start" x-model="start" min="1" max="600" step="1">
+      </div>
+      <div class="demo-control">
+        <label for="amplitude">Amplitude: <span x-text="amplitude"></span></label>
+        <input type="range" id="amplitude" x-model="amplitude" min="1" max="100" step="1">
+      </div>
+      <div class="demo-control">
+        <label for="width">Width: <span x-text="width"></span></label>
+        <input type="range" id="width" x-model="width" min="1" max="100" step="1">
+      </div>
+    </div>
+  </div>
+</div>
+<p class="visual-break">⁂</p>
+<p>Then, the idea is that you generate a set of such sine perturbations at random lines and at random starting positions, and add their effect (<code>y(x)</code>) to each line, dampened by how far the line being rendered is from the origin line of that perturbation.</p>
+<p>For each stage of dampening, reduce the amplitude by a constant, increase the width by 2 units, and decrease the start position by π units.<small class="sidenote marginnote">&#8203;<span class="sidenote-surroundings">&nbsp;(</span>The choice to increase width by 2 units is arbitrary.<span class="sidenote-surroundings">)&nbsp;</span></small>
+<small class="sidenote marginnote">&#8203;<span class="sidenote-surroundings">&nbsp;(</span>Still, whatever our choice for the increase in width, we can calculate the corresponding decrease in starting coordinate which will keep the peaks aligned by equating <code>(x-s)/w</code> and <code>(x-s')/w'</code> both to <code>π/2</code>.<span class="sidenote-surroundings">)&nbsp;</span></small>
+That lets it spread out while still being on-center.</p>
+<script type="text/javascript">
+function perturbation_y(ptb, x) {
+  //console.log(ptb);
+  if (!ptb) return 0;
+  if (x < ptb.start || (x - ptb.start) / ptb.width >= Math.PI) {
+    return 0;
+  }
+  let dy = -ptb.amplitude * Math.sin((x - ptb.start) / ptb.width);
+  //if (Math.abs(dy - -ptb.amplitude) < 0.01)
+  //  return 0;
+  if (ptb.direction === "down") {
+    return -dy;
+  }
+  return dy;
+}
+function dampen(ptb, stages, amplitude_reduction) {
+  if (ptb.amplitude <= amplitude_reduction * stages) {
+    return null;
+  }
+  return {
+    amplitude: ptb.amplitude - (amplitude_reduction * stages),
+    width: ptb.width + (2 * stages),
+    start: ptb.start - (Math.PI * stages),
+    direction: ptb.direction,
+  };
+}
+</script>
+<div x-data="{
+  clip: true,
+  start: 280,
+  amplitude: 15,
+  width: 20,
+  amplitude_reduction: 0.5,
+  lines: 20
+}" x-effect="
+const ctx = $refs.canvas.getContext('2d');
+ctx.clearRect(0, 0, $refs.canvas.width, $refs.canvas.height);
+ctx.fillStyle = 'rgb(255 255 255)';
+const base_ptb = {
+  start: start,
+  amplitude: amplitude,
+  width: width,
+};
+const ptbs = {};
+for (var line = 0; line < lines; line++) {
+  delta_line = Math.abs(line - (lines / 2));
+  ptbs[line] = dampen(base_ptb, delta_line, amplitude_reduction);
+  y = ($refs.canvas.height - (lines * 20)) / 2 + (line * 20);
+  for (var x = 0; x < $refs.canvas.width; x++) {
+    if (delta_line == 0) {
+      ctx.fillStyle = 'rgb(234 157 52)';
+    } else {
+      ctx.fillStyle = 'rgb(255 255 255)';
+    }
+    dy = perturbation_y(ptbs[line], x);
+    ctx.fillRect(x, y + dy, 1, 1);
+  }
+}
+">
+  <div class="demo-container" id="demo-container-stacking">
+    <div class="demo-container-left">
+      <canvas x-ref="canvas" id="sine-canvas" width=600 height=600></canvas>
+    </div>
+    <div class="demo-controls-container">
+      <div class="demo-control">
+        <label for="start">Start: <span x-text="start"></span></label>
+        <input type="range" id="start" x-model.number="start" min="1" max="600" step="1">
+      </div>
+      <div class="demo-control">
+        <label for="amplitude">Amplitude: <span x-text="amplitude"></span></label>
+        <input type="range" id="amplitude" x-model.number="amplitude" min="1" max="100" step="1">
+      </div>
+      <div class="demo-control">
+        <label for="width">Width: <span x-text="width"></span></label>
+        <input type="range" id="width" x-model.number="width" min="1" max="100" step="1">
+      </div>
+      <div class="demo-control">
+        <label for="amplitude_reduction">Amplitude reduction: <span x-text="amplitude_reduction"></span></label>
+        <input type="range" id="amplitude_reduction" x-model.number="amplitude_reduction" min="-2" max="2" step="0.5">
+      </div>
+    </div>
+  </div>
+</div>
+<p class="visual-break">⁂</p>
+<p>Thus far this looks simplistic, but when adding multiple randomly-generated sines to one image, the effect is cool.</p>
+<div x-data="{
+  min_amp: 10,
+  max_amp: 25,
+  min_width: 10,
+  max_width: 20,
+  min_per_line: 1,
+  max_per_line: 3,
+  damp: 1,
+  lines: 60,
+  seed: [203, 174, 240, 244, 80, 8, 38, 1],
+  async getImageData() {
+    await window.init();
+    return new ImageData(new Uint8ClampedArray(window.generate(600, this.min_amp, this.max_amp, this.min_width, this.max_width, this.min_per_line, this.max_per_line, this.damp, this.lines, this.seed)), 600, 600);
+  }
+}" x-effect="
+  const depends = [min_amp, max_amp, min_width,
+                   max_width, min_per_line,
+                   max_per_line,
+                   damp, lines, seed];
+  const ctx = $refs.canvas.getContext('2d');
+  ctx.putImageData(await getImageData(), 0, 0);
+">
+<small class="sidenote marginnote">&#8203;<span class="sidenote-surroundings">&nbsp;(</span>This demonstration uses a Rust + WASM implementation. The source code can be found <a href="https://github.com/bharadwaj-raju/bharadwaj-raju.github.io/tree/main/content/posts/stacked-sines/demo-wasm/">here</a>.<span class="sidenote-surroundings">)&nbsp;</span></small>
+  <div class="demo-container" id="demo-container-stacking">
+    <div class="demo-container-left">
+      <canvas x-ref="canvas" id="sine-canvas" width=600 height=600></canvas>
+    </div>
+    <div x-data class="demo-controls-container" style="height: 602px">
+      <div class="demo-control">
+        <label for="min_amp">Min amplitude: <span x-text="min_amp"></span></label>
+        <input type="range" id="min_amp" x-model.number="min_amp" min="1" max="50" step="1">
+      </div>
+      <div class="demo-control">
+        <label for="max_amp">Max amplitude: <span x-text="max_amp"></span></label>
+        <input type="range" id="max_amp" x-model.number="max_amp" min="1" max="50" step="1">
+      </div>
+      <div class="demo-control">
+        <label for="min_width">Min width: <span x-text="min_width"></span></label>
+        <input type="range" id="min_width" x-model.number="min_width" min="1" max="50" step="1">
+      </div>
+      <div class="demo-control">
+        <label for="max_width">Max width: <span x-text="max_width"></span></label>
+        <input type="range" id="max_width" x-model.number="max_width" min="1" max="50" step="1">
+      </div>
+      <div class="demo-control">
+        <label for="min_per_line">Min per line: <span x-text="min_per_line"></span></label>
+        <input type="range" id="min_per_line" x-model.number="min_per_line" min="0" max="15" step="1">
+      </div>
+      <div class="demo-control">
+        <label for="max_per_line">Max per line: <span x-text="max_per_line"></span></label>
+        <input type="range" id="max_per_line" x-model.number="max_per_line" min="1" max="15" step="1">
+      </div>
+      <div class="demo-control">
+        <label for="damp">Amplitude reduction: <span x-text="damp"></span></label>
+        <input type="range" id="damp" x-model.number="damp" min="-2" max="2" step="0.5">
+      </div>
+      <button x-bind:title="seed" @click="seed = generateSeed()" style="margin-top: auto" class="demo-control-button">Randomize Seed</button>
+    </div>
+  </div>
+</div>
+<p></p>
+
+  <div class="tombstone"></div>
+</main>
+
+<script src="/js/scrollsync.js"></script>
+
+    </div>
+  </section>
+</body>
+
+</html>

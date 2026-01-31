@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/icon.png" type="image/png">
+  <link rel="stylesheet" href="https://bharadwaj-raju.github.io/style.css?h=fd1cd5b3f23e99f3a0ff">
+  <link rel="stylesheet" href="https://bharadwaj-raju.github.io/print.css?h=9191ac8d6abd85d76080"
+    media="print">
+  <link rel="stylesheet" href="https://bharadwaj-raju.github.io/dark.css?h=54559654853c22f12773"
+    media="screen and (prefers-color-scheme: dark)">
+  
+  <link rel="preload" href="/fonts/alegreya-ht-pro/Alegreya-Regular.woff2" as="font" type="font/woff2"
+    crossorigin="anonymous" />
+  <link rel="preload" href="/fonts/alegreya-sans-ht/AlegreyaSans-Regular.woff2" as="font" crossorigin="anonymous" />
+  <link rel="preload" href="/fonts/alegreya-sans-ht/AlegreyaSansSC-Bold.woff2" as="font" crossorigin="anonymous" />
+  <link rel="stylesheet" type="text/css" href="/syntax-theme-dark.css" media="(prefers-color-scheme: dark)" />
+  <link rel="stylesheet" type="text/css" href="/syntax-theme-light.css" media="(prefers-color-scheme: light)" />
+
+  <title>Angled Random Walks for DLA-like Terrain Generation \  ~bharadwaj</title>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="/" id="logo"><span id="logo-tilde">~</span><span id="logo-full">bharadwaj</span></a>
+      <div id="menu">
+        <a href="/posts/">Posts</a>
+      </div>
+    </nav>
+  </header>
+  <section class="section">
+    <div class="container">
+      
+
+<div class="toc">
+  <ul>
+    
+    <li>
+      <a href="https://bharadwaj-raju.github.io/posts/angled-random-walk-mountains/#approach">Approach</a>
+      
+    </li>
+    
+    <li>
+      <a href="https://bharadwaj-raju.github.io/posts/angled-random-walk-mountains/#implementation">Implementation</a>
+      
+    </li>
+    
+    <li>
+      <a href="https://bharadwaj-raju.github.io/posts/angled-random-walk-mountains/#heightmap">Heightmap</a>
+      
+    </li>
+    
+    <li>
+      <a href="https://bharadwaj-raju.github.io/posts/angled-random-walk-mountains/#demonstration">Demonstration</a>
+      
+    </li>
+    
+    <li>
+      <a href="https://bharadwaj-raju.github.io/posts/angled-random-walk-mountains/#similar-stuff">Similar Stuff</a>
+      
+    </li>
+    
+  </ul>
+</div>
+
+<main>
+  <h1 class="title">
+    Angled Random Walks for <abbr>DLA</abbr>-like Terrain Generation
+  </h1>
+  <p class="dateline subtitle">2024-08-03</p>
+  <script type="module">
+    import init, { hello, generate, to_image, heightmap_blur } from './demo-wasm/angled_random_walker_demo_wasm.js';
+    async function run() {
+        await init();
+        const result = hello();
+        if (result !== 42)
+            throw new Error("wasm hello doesn't work!");
+    }
+    window.generate = generate;
+    window.to_image = to_image;
+    window.heightmap_blur = heightmap_blur;
+    window.init = init;
+</script>
+<p>I watched this excellent video, <a href="https://www.youtube.com/watch?v=gsJHzBTPG0Y"><em>Better Mountain Generators That Aren’t Perlin Noise or Erosion</em></a> by <a href="https://www.youtube.com/@JoshsHandle">Josh’s Channel</a>. It discusses generating mountain heightmaps
+using a technique called <a href="https://en.wikipedia.org/wiki/Diffusion-limited_aggregation">Diffusion-Limited Aggregation</a>. The structures produced by this process are known as Brownian trees.</p>
+<figure class="figure-floating figure-floating-left">
+    <img src="Brownian_tree.gif" alt="Brownian tree"
+    
+    
+    />
+    <figcaption>Growing Brownian tree.<br>Animation by <a href="https://commons.wikimedia.org/wiki/File:Brownian_tree.gif">あるうぃんす</a>.</figcaption>
+</figure>
+<p>In <abbr>DLA</abbr>, we start with a seed typically placed at the center. At each step, we randomly place points on the grid and then random-walk them until they hit an existing particle, at which point they are frozen there. This is, of course, very inefficient. The video describes a good technique to get it to be faster, by starting with a small grid and doing a <span class="sidenote-ref"><span class="sidenote-ref-text">crisp upscale</span><span class="sidenote-number"><small class="sidenote" role="note"><!--&#8203;-->&nbsp;<span class="sidenote-surroundings">&nbsp;(</span>This upscale isn’t done directly on the pixels — instead, we keep track of which pixel sticks to which, and use that graph to populate a larger grid.<span class="sidenote-surroundings">)&nbsp;</span></small></span></span>
+ after the grid is filled to a certain degree, and repeating the process until we get to the desired size.</p>
+<p>But my immediate thoughts after the video were that surely this would be faster the other way round — by generating outwards from the initial seed. After experimenting with a lot of approaches, I found a way that yields <em>fairly</em> <abbr>DLA</abbr>-like results with much less computational cost.</p>
+<h2 id="approach"><a class="zola-anchor" href="#approach" aria-label="Anchor link for: approach">Approach</a></h2>
+<p>We have a number of <em>random walkers</em> on the grid. Each of them has these properties:</p>
+<ol>
+<li><em>Age</em>: How many pixels it travelled since it was spawned.</li>
+<li><em>Generation</em>: How many parent walkers it has.</li>
+<li><em>Angle</em>: What angle the walker aims towards.</li>
+<li><em>Type</em>: Is it a <em>long</em> or <em>short</em> walker. <em>Short</em> walkers don’t split into more walkers when they end.</li>
+</ol>
+<p>The algorithm for generation is:</p>
+<ol>
+<li>Start with a grid of zeros.</li>
+<li>Place a number of walkers at the centre, all aimed at different angles.</li>
+<li>While there are any walkers:
+<ul>
+<li>If it is a long walker and its age module some frequency parameter is zero, spawn a short walker at that position.</li>
+<li>If its age is greater than some maximum age, it dies, and…
+<ul>
+<li>If its generation is less than some maximum generation, and it is a long walker, spawn some number of long walkers where it stopped, each aimed slightly offset from the parent’s angle.</li>
+</ul>
+</li>
+<li>Else, the walker moves in a random direction, chosen via weighted sampling where the weights are smaller the larger the angular distance between that direction and the target angle, and <span class="sidenote-ref"><span class="sidenote-ref-text">the most opposite direction is removed</span><span class="sidenote-number"><small class="sidenote" role="note"><!--&#8203;-->&nbsp;<span class="sidenote-surroundings">&nbsp;(</span>Otherwise, the walkers wind back on themselves and fail to spread apart sufficiently. An example of what that looks like: <img src="./with-least-likely-included.png" alt="with least likely included, the generated shape is a lot smaller and more bloblike" /><span class="sidenote-surroundings">)&nbsp;</span></small></span></span>
+ by subtracting its weight from every weight. The point it moves to is filled in on the grid.</li>
+</ul>
+</li>
+</ol>
+<h2 id="implementation"><a class="zola-anchor" href="#implementation" aria-label="Anchor link for: implementation">Implementation</a></h2>
+<p>I’ve written a Rust implementation of this algorithm.</p>
+<ul>
+<li><em>Repository</em>: <a href="https://github.com/bharadwaj-raju/angled-random-walker">bharadwaj-raju / angled-random-walker</a></li>
+<li><em>Crates.io</em>: <a href="https://crates.io/crates/angled-random-walker">angled-random-walker</a></li>
+<li><em>Documentation</em>: <a href="https://docs.rs/angled-random-walker/latest/angled_random_walker/">angled_random_walker on docs.rs</a></li>
+</ul>
+<h2 id="heightmap"><a class="zola-anchor" href="#heightmap" aria-label="Anchor link for: heightmap">Heightmap</a></h2>
+<p>By filling each walked pixel with the cumulative age of its walker, and blurring the result, we get a simple heightmap. But this just gives you mountain-like smooth blobs.</p>
+<p>To get more interesting terrain, we superimpose a clamped and lightly-blurred version. This preserves the smaller and sharper details generated in the process. The effect is — in my estimation — close to the sought-after erosion look.</p>
+<h2 id="demonstration"><a class="zola-anchor" href="#demonstration" aria-label="Anchor link for: demonstration">Demonstration</a></h2>
+<p>This is a <em>live</em> demonstration. Play around with the sliders to immediately see your changes. To make it easier to isolate the effects of varying parameters, the seed is held constant — click “Randomize Seed” to generate from a new seed.</p>
+<script src="/js/three.min.js"></script>
+<script src="/js/OrbitControls.js"></script>
+<script>
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1b1b1b);
+    scene.fog = new THREE.Fog(0x0, 1, 10000);
+    const light = new THREE.PointLight(0xffffff, 1)
+    const camera = new THREE.PerspectiveCamera(75, 1, 0.01, 1000);
+    camera.add(light);
+    const renderer = new THREE.WebGLRenderer();
+    camera.position.z = 0.6;
+    camera.position.y = 0.2;
+    console.log(camera.position);
+    renderer.setSize(512, 512);
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+    animate();
+</script>
+<script>
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
+    }
+    function generateSeed() {
+        const arr = [];
+        for (let i = 0; i < 8; i++) {
+            arr.push(getRandomInt(256));
+        }
+        return arr;
+    }
+</script>
+<script src="/js/alpine.js" defer></script>
+<div x-data="{
+    seed: [1, 2, 3, 4, 5, 6, 7, 8],
+    canvas2dContext: undefined,
+    canvas3dContainer: undefined,
+    longAge: 75,
+    shortAge: 35,
+    generations: 4,
+    maxChildren: 2,
+    shortBranchFreq: 20,
+    longDivergence: 0.2,
+    shortDivergence: 0.3,
+    blurRadius: 20,
+    detailsMax: 15,
+    async rawData() {
+        await window.init();
+        return window.generate(512, this.longAge, this.shortAge, this.generations, this.maxChildren, this.longDivergence, this.shortDivergence, this.shortBranchFreq, this.seed);
+    },
+    async image(data) {
+        await window.init();
+        return new Uint8ClampedArray(window.to_image(data));
+    },
+    async mesh(data) {
+        await window.init();
+        const heightmapTexture = new THREE.DataTexture(
+            window.heightmap_blur(data, this.blurRadius, this.detailsMax),
+            512,
+            512,
+            THREE.RedFormat,
+            THREE.UnsignedByteType
+        );
+        heightmapTexture.wrapS = THREE.RepeatWrapping;
+        heightmapTexture.repeat.x = -1;
+        heightmapTexture.needsUpdate = true;
+        const material = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            displacementMap: heightmapTexture,
+            displacementScale: 205,
+            side: THREE.DoubleSide,
+            flatShading: true,
+        });
+        const geometry = new THREE.PlaneBufferGeometry(1024, 1024, 256, 256);
+        geometry.computeVertexNormals();
+        geometry.normalizeNormals();
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(0, 0, 0);
+        mesh.rotation.x = -Math.PI / 2;
+        mesh.rotation.z = -Math.PI;
+        mesh.scale.set(1 / 1024, 1 / 1024, 1 / 1024);
+        return mesh;
+    }
+}" x-effect="
+    const depends = [longAge, shortAge, generations,
+                     maxChildren, longDivergence, shortDivergence,
+                     shortBranchFreq, seed, blurRadius, detailsMax];
+    const data = await rawData();
+    const mesh3d = await mesh(data);
+    canvas2dContext && canvas2dContext.putImageData(new ImageData(await image(data), 512, 512), 0, 0);
+    canvas3dContainer && canvas3dContainer.appendChild(renderer.domElement);
+    scene.clear();
+    scene.add(camera);
+    scene.add(mesh3d);
+">
+    <style>
+        .demo-container {
+            margin-top: calc(3 * var(--gap));
+            display: flex;
+            gap: var(--gap);
+        }
+        .demo-3d-container {
+            padding: 0px;
+            margin: var(--gap) auto;
+            width: 512px;
+        }
+        .demo-3d-container canvas {
+            border: 1px solid var(--text);
+            cursor: grab;
+        }
+        .demo-3d-controls {
+            display: flex;
+            justify-content: center;
+            gap: var(--gap);
+        }
+        .demo-3d-control {
+            display: flex;
+            flex-direction: column;
+        }
+        @media (max-width: 1400px) {
+            .demo-container {
+                flex-direction: column;
+                padding: 0;
+                border: none;
+                width: 100% !important;
+            }
+            .demo-canvas {
+                width: 100% !important;
+                min-width: 100% !important;
+                max-width: 100% !important;
+                height: unset !important;
+            }
+            .demo-3d-whole-container, #demo-3d-controls, #demo-3d-container {
+                width: 100% !important;
+            }
+        }
+        .demo-container-left {
+            width: 512px;
+            min-width: 512px;
+            max-width: 512px;
+            text-align: center;
+        }
+        .demo-canvas {
+            border: 1px solid var(--text);
+            background-color: var(--base-dark);
+            width: 512px;
+            min-width: 512px;
+            max-width: 512px;
+            height: 512px;
+        }
+        .demo-control {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .demo-controls-container {
+            display: flex;
+            flex-direction: column;
+            gap: calc(var(--gap) / 2);
+            flex-grow: 1;
+        }
+        .gen-btn {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: inherit;
+            font-family: inherit;
+            text-decoration: underline;
+            font-style: italic;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+    <small class="sidenote marginnote">&#8203;<span class="sidenote-surroundings">&nbsp;(</span>This demonstration uses the same implementation linked above, through a <abbr>WASM</abbr> layer. The source code of the <abbr>WASM</abbr> module can be found <a href="https://github.com/bharadwaj-raju/angled-random-walker-demo-wasm">here</a>.<span class="sidenote-surroundings">)&nbsp;</span></small>
+    <small class="sidenote marginnote">&#8203;<span class="sidenote-surroundings">&nbsp;(</span>Eight initial walkers are used here, aimed at each of the cardinal and ordinal directions. The library lets you customize the number and angles of the walkers, if you wish.<span class="sidenote-surroundings">)&nbsp;</span></small>
+    <div class="demo-container">
+        <div class="demo-container-left">
+            <canvas x-init="canvas2dContext = $el.getContext('2d')" class="demo-canvas" width="512" height="512"></canvas>
+        </div>
+        <div class="demo-controls-container" style="height: 512px">
+            <div class="demo-control">
+                <label for="max-long-age">Max long walker age: <span x-text="longAge"></span></label>
+                <input type="range" id="max-long-age" x-model="longAge" min="1" max="100" step="1">
+            </div>
+            <div class="demo-control">
+                <label for="max-short-age">Max short walker age: <span x-text="shortAge"></span></label>
+                <input type="range" id="max-short-age" x-model="shortAge" min="1" max="100" step="1">
+            </div>
+            <div class="demo-control">
+                <label for="max-gen">Max generations: <span x-text="generations"></span></label>
+                <input type="range" id="max-gen" x-model="generations" min="1" max="10"  step="1">
+            </div>
+            <div class="demo-control">
+                <label for="max-children">Children spawned: <span x-text="maxChildren"></span></label>
+                <input type="range" id="max-children" x-model="maxChildren" min="1" max="5"  step="1">
+            </div>
+            <div class="demo-control">
+                <label for="short-branch-freq">Short branch every: <span x-text="shortBranchFreq"></span><span class="demo-control-unit">steps</span></label>
+                <input type="range" id="short-branch-freq" x-model="shortBranchFreq" min="1" max="70"  step="1">
+            </div>
+            <div class="demo-control">
+                <label for="long-angle-divergence">Max long child divergence: <span x-text="longDivergence"></span><span class="demo-control-unit">π</span></label>
+                <input type="range" id="long-angle-divergence" x-model="longDivergence" min="0.1" max="1.0"
+                    step="0.05">
+            </div>
+            <div class="demo-control">
+                <label for="short-angle-divergence">Max short child divergence: <span x-text="shortDivergence"></span><span class="demo-control-unit">π</span></label>
+                <input type="range" id="short-angle-divergence" x-model="shortDivergence" min="0.1" max="1.0"
+                    step="0.05">
+            </div>
+            <button x-bind:title="seed" @click="seed = generateSeed()" style="margin-top: auto" class="demo-control-button">Randomize Seed</button>
+        </div>
+    </div>
+    <p>And in <abbr>3D</abbr>:</p>
+    <small class="sidenote marginnote">&#8203;<span class="sidenote-surroundings">&nbsp;(</span>Please excuse the plainness. I don’t yet know enough <abbr>3D</abbr> graphics to make it nicely Earth-colored <em>and</em> give it lighting and shading such that you can actually see the details.<span class="sidenote-surroundings">)&nbsp;</span></small>
+    <div class="demo-3d-whole-container">
+        <div x-init="canvas3dContainer = $el" class="demo-3d-container"></div>
+        <div class="demo-3d-controls">
+            <div class="demo-3d-control">
+                <label for="blur-radius">Blur radius: <span x-text="blurRadius"></span></label>
+                <input type="range" id="blur-radius" x-model="blurRadius" min="1" max="32" value="20" step="1">
+            </div>
+            <div class="demo-3d-control">
+                <label for="details-max">Details layer max: <span x-text="detailsMax"></span></label>
+                <input type="range" id="details-max" x-model="detailsMax" min="1" max="20" value="15" step="1">
+            </div>
+        </div>
+    </div>
+</div>
+<h2 id="similar-stuff"><a class="zola-anchor" href="#similar-stuff" aria-label="Anchor link for: similar-stuff">Similar Stuff</a></h2>
+<p><a href="https://planet11games.com/">Planet Eleven Games</a> posted about <a href="https://old.reddit.com/r/proceduralgeneration/comments/1bup6wm/using_drunken_walk_for_height_maps/"><em>Using drunken walk for height maps</em></a>. They were inspired by the exact same video, but the approach they use is different, involving an unbiased random expansion with each new pixel having a chance of dropping in height. Check out their <a href="https://planet11games.com/drunkwalk/">demo</a>.</p>
+
+  <div class="tombstone"></div>
+</main>
+
+<script src="/js/scrollsync.js"></script>
+
+    </div>
+  </section>
+</body>
+
+</html>

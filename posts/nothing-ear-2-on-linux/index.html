@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/icon.png" type="image/png">
+  <link rel="stylesheet" href="https://bharadwaj-raju.github.io/style.css?h=fd1cd5b3f23e99f3a0ff">
+  <link rel="stylesheet" href="https://bharadwaj-raju.github.io/print.css?h=9191ac8d6abd85d76080"
+    media="print">
+  <link rel="stylesheet" href="https://bharadwaj-raju.github.io/dark.css?h=54559654853c22f12773"
+    media="screen and (prefers-color-scheme: dark)">
+  
+  <link rel="preload" href="/fonts/alegreya-ht-pro/Alegreya-Regular.woff2" as="font" type="font/woff2"
+    crossorigin="anonymous" />
+  <link rel="preload" href="/fonts/alegreya-sans-ht/AlegreyaSans-Regular.woff2" as="font" crossorigin="anonymous" />
+  <link rel="preload" href="/fonts/alegreya-sans-ht/AlegreyaSansSC-Bold.woff2" as="font" crossorigin="anonymous" />
+  <link rel="stylesheet" type="text/css" href="/syntax-theme-dark.css" media="(prefers-color-scheme: dark)" />
+  <link rel="stylesheet" type="text/css" href="/syntax-theme-light.css" media="(prefers-color-scheme: light)" />
+
+  <title>Creating a Linux controller for the Nothing Ear (2) \  ~bharadwaj</title>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="/" id="logo"><span id="logo-tilde">~</span><span id="logo-full">bharadwaj</span></a>
+      <div id="menu">
+        <a href="/posts/">Posts</a>
+      </div>
+    </nav>
+  </header>
+  <section class="section">
+    <div class="container">
+      
+
+<div class="toc">
+  <ul>
+    
+    <li>
+      <a href="https://bharadwaj-raju.github.io/posts/nothing-ear-2-on-linux/#all-the-things-that-didn-t-work">All the things that didn’t work</a>
+      
+    </li>
+    
+    <li>
+      <a href="https://bharadwaj-raju.github.io/posts/nothing-ear-2-on-linux/#snooping-on-bluetooth-from-android-x86">Snooping on Bluetooth from Android-x86</a>
+      
+    </li>
+    
+    <li>
+      <a href="https://bharadwaj-raju.github.io/posts/nothing-ear-2-on-linux/#protocol-analysis">Protocol Analysis</a>
+      
+      <ul>
+        
+        <li>
+          <a href="https://bharadwaj-raju.github.io/posts/nothing-ear-2-on-linux/#ear-tip-fit-test">Ear Tip Fit Test</a>
+        </li>
+        
+        <li>
+          <a href="https://bharadwaj-raju.github.io/posts/nothing-ear-2-on-linux/#device-info">Device Info</a>
+        </li>
+        
+        <li>
+          <a href="https://bharadwaj-raju.github.io/posts/nothing-ear-2-on-linux/#shortcuts">Shortcuts</a>
+        </li>
+        
+      </ul>
+      
+    </li>
+    
+    <li>
+      <a href="https://bharadwaj-raju.github.io/posts/nothing-ear-2-on-linux/#the-finished-product">The Finished Product</a>
+      
+    </li>
+    
+  </ul>
+</div>
+
+<main>
+  <h1 class="title">
+    Creating a Linux controller for the Nothing Ear (2)
+  </h1>
+  <p class="dateline subtitle">2024-01-06</p>
+  <p>I bought a <a href="https://nothing.tech/products/ear-2">Nothing Ear (2)</a>, and I’m mostly happy with it. It comes 
+with a neat-looking Android app to let you set the noise cancellation level and equalization and such.</p>
+<p>That’s fine, but it would be cool to be able to control it from my Linux computer as well. So here we are. 
+We’re going to reverse-engineer the Bluetooth protocol that it speaks, and from there 
+develop a Linux controller. In the spirit of <a href="https://www.youtube.com/watch?v=A9PP8AeSbbo">Nothing Chats</a>, I’m sure Carl Pei would be appreciative.</p>
+<p>If you don’t want to read the technical details of how this was achieved, skip to the <a href="https://bharadwaj-raju.github.io/posts/nothing-ear-2-on-linux/#the-finished-product"><em>Finished Product</em></a>.</p>
+<aside class="note btw">
+    There exists a reverse-engineered controller for the Ear (2) already! It’s called <a href="https://github.com/radiance-project/ear-pc">Ear (PC)</a>. It’s great and looks sleek, but unfortunately it’s Windows-only, and the actual Bluetooth communication code is not released and kept private for “the security of the users”. That’s no good for us.
+</aside><h2 id="all-the-things-that-didn-t-work"><a class="zola-anchor" href="#all-the-things-that-didn-t-work" aria-label="Anchor link for: all-the-things-that-didn-t-work">All the things that didn’t work</a></h2>
+<p>This was the first time I had reverse engineered anything. I ran down a lot of dead ends:</p>
+<ul>
+<li>
+<p><em><strong>Decompiling the actual Android app.</strong></em></p>
+<p>The generated assembly (Smali) and decompiled Java code are just unreadable.</p>
+</li>
+<li>
+<p><em><strong>Monitoring Bluetooth traffic from my Android.</strong></em></p>
+<p>Doing this live would need root, or specialized hardware like the <a href="https://greatscottgadgets.com/ubertoothone/">Ubertooth One</a>.</p>
+</li>
+<li>
+<p><em><strong>Monitoring Bluetooth traffic from <a href="https://waydro.id/">Waydroid</a>.</strong></em></p>
+<p>Waydroid <a href="https://github.com/waydroid/waydroid/issues/155">does not support Bluetooth passthrough</a>.</p>
+</li>
+</ul>
+<p>Finally I thought of running Android-x86 in a VM, giving it Bluetooth, and analyzing traffic from there.</p>
+<p>At this point I should thank <a href="https://wejn.org/about/">Michal Jirků</a>. While searching about snooping on 
+Android-x86 traffic from the host, I found their series of posts on doing a very similar thing for their Yamaha 
+<abbr>YAS-207</abbr>. That confirmed that I had indeed stumbled on a productive approach.</p>
+<h2 id="snooping-on-bluetooth-from-android-x86"><a class="zola-anchor" href="#snooping-on-bluetooth-from-android-x86" aria-label="Anchor link for: snooping-on-bluetooth-from-android-x86">Snooping on Bluetooth from Android-x86</a></h2>
+<p>So I set up an Android-x86 VM on VirtualBox and passed through Bluetooth.</p>
+<aside class="note tip">
+    Bluetooth didn’t work on the Android-x86 guest at first. I had to run these commands as root on the Android (from user Jikodis on <a href="https://github.com/android-x86/android-x86.github.io/issues/91#issuecomment-987475588%22">this issue</a>):</p>
+<pre data-lang="shell" class="language-shell z-code"><code class="language-shell" data-lang="shell"><span class="z-text z-plain"># hciconfig hci0 down
+# pm disable com.android.bluetooth
+# pm enable com.android.bluetooth
+# service call bluetooth_manager 6
+# hciconfig hci0 up
+</span></code></pre>
+<p>Try that if Bluetooth doesn’t work despite you enabling passthrough of the Bluetooth USB device.</p>
+<p>One more thing: if you pass through Bluetooth to one VM session, you <em>might</em> have to reboot your host to get it back. There’s probably some command that does that without rebooting, but this is just so you keep the possibility in mind.
+</aside>
+<p>After a lot of fiddling with the Android Bluetooth settings, restarting, and so on, finally:</p>
+<figure >
+    <img src="nothing-x-on-android-x86.png" alt="Nothing X running on Android-x86"
+    
+    
+    />
+    <figcaption>Look at the pixelation on those images. This app wasn’t built with this DPI in mind.</figcaption>
+</figure>
+<p>After setting up developer options to enable Bluetooth HCI sniffing and USB debugging, we can <span class="sidenote-ref"><span class="sidenote-ref-text">connect via ADB</span><span class="sidenote-number"><small class="sidenote" role="note"><!--&#8203;-->&nbsp;<span class="sidenote-surroundings">&nbsp;(</span>See the “using adb with a NAT’ed VM” section in <a href="https://www.android-x86.org/documentation/debug.html">the Android-x86 docs</a>. Change the <code>adb localhost:5555</code> command to <code>adb connect localhost:5555</code>.<span class="sidenote-surroundings">)&nbsp;</span></small></span></span>
+.</p>
+<p>Once we’ve connected ADB, we can simply select the Android device in Wireshark running on the host, and get our first look at the Bluetooth traffic.</p>
+<p><img src="https://bharadwaj-raju.github.io/posts/nothing-ear-2-on-linux/wireshark.png" alt="Wireshark" /></p>
+<p>The whole thing appears to be very chatty; there are nearly 300 events when I do something as simple as changing the ANC mode. Presumably only some of them are actually relevant, but that is a lot to sift through.</p>
+<h2 id="protocol-analysis"><a class="zola-anchor" href="#protocol-analysis" aria-label="Anchor link for: protocol-analysis">Protocol Analysis</a></h2>
+<p>One neat trick: if you disconnect and reconnect the earphones while a Wireshark capture is running, the capture logs get a lot more detailed! Compare this to the previous screenshot:</p>
+<p><img src="https://bharadwaj-raju.github.io/posts/nothing-ear-2-on-linux/wireshark-transparency-cmd.png" alt="Better Wireshark" /></p>
+<p>All the “Connection oriented channel” packets get turned into actual commands and responses with the correct protocol! Great.</p>
+<p>From this we can sift through the packets better. The first thing I tested was switching between having the ANC off and on transparency mode. If we leave the huge <code>PT=Unknown</code> packets of ~592 bytes alone for a minute, we’ll observe <small class="sidenote marginnote">&#8203;<span class="sidenote-surroundings">&nbsp;(</span>This observation didn’t come directly. I wasted a lot of time chasing even more dead ends like trying to connect to the Audio Sink service.<span class="sidenote-surroundings">)&nbsp;</span></small> that every time the ANC is set to transparency, a lot of commands are sent over RFCOMM to channel 15:</p>
+<p>Let’s try manually constructing and sending these packets to the device, back on desktop Linux. I used Wireshark to filter all packets of channel 15 and saved it as JSON,
+then wrote a <a href="https://gitlab.com/-/snippets/3636681">quick Python script</a> to read all the packets and send them out, with a 1 second gap to let me observe the effects. When I ran it, I finally heard that sigh in my ear that signalled transparency mode. This is the packet that does it:</p>
+<pre class="z-code"><code><span class="z-text z-plain">55:60:01:0f:f0:03:00:cb:01:07:00:c5:af
+</span></code></pre>
+<p>This is clearly the right track. After trying more captured packets, here is the table of commands to do various operations:</p>
+<table><thead><tr><th>Command</th><th>Packet</th></tr></thead><tbody>
+<tr><td>ANC Transparency</td><td><code>55:60:01:0f:f0:03:00:cb:01:07:00:c5:af</code></td></tr>
+<tr><td>ANC Off</td><td><code>55:60:01:0f:f0:03:00:cd:01:05:00:c4:47</code></td></tr>
+<tr><td>ANC High</td><td><code>55:60:01:0f:f0:03:00:cf:01:01:00:e6:6f</code></td></tr>
+<tr><td>ANC Mid</td><td><code>55:60:01:0f:f0:03:00:d5:01:02:00:e6:9f</code></td></tr>
+<tr><td>ANC Low</td><td><code>55:60:01:0f:f0:03:00:d7:01:03:00:e7:0f</code></td></tr>
+<tr><td>ANC Adaptive</td><td><code>55:60:01:0f:f0:03:00:dd:01:04:00:e5:3f</code></td></tr>
+<tr><td>In-ear detection Off</td><td><code>55:60:01:04:f0:03:00:25:01:01:00:b2:94</code></td></tr>
+<tr><td>In-ear detection On</td><td><code>55:60:01:04:f0:03:00:26:01:01:01:73:10</code></td></tr>
+<tr><td>Low-latency mode Off</td><td><code>55:60:01:40:f0:02:00:28:02:00:a7:04</code></td></tr>
+<tr><td>Low-latency mode On</td><td><code>55:60:01:40:f0:02:00:27:01:00:97:f7</code></td></tr>
+</tbody></table>
+<h3 id="ear-tip-fit-test"><a class="zola-anchor" href="#ear-tip-fit-test" aria-label="Anchor link for: ear-tip-fit-test">Ear Tip Fit Test</a></h3>
+<p>The packet to start an ear tip fit test is <code>55:60:01:14:f0:01:00:2a:01:43:16</code>. We get back some results indicating if the left and right earbuds fit well.</p>
+<p>If the left earbud doesn’t fit, but the right does, we get this packet:</p>
+<pre class="z-code"><code><span class="z-text z-plain">0000   55 00 01 0d e0 02 00 00 01 00
+</span></code></pre>
+<p>If both earbuds fit:</p>
+<pre class="z-code"><code><span class="z-text z-plain">0000   55 00 01 0d e0 02 00 00 00 00
+</span></code></pre>
+<p>We can make a good guess that the last two bytes represent 0 = good fit, 1 = bad fit, for L/R respectively (further testing confirms this).</p>
+<h3 id="device-info"><a class="zola-anchor" href="#device-info" aria-label="Anchor link for: device-info">Device Info</a></h3>
+<p>If we look at the first few packets exchanged when a connection is made on the Android app, and experiment with sending them, we notice that sending <code>55:60:01:42:c0:00:00:03:e0:d1</code> gives us this reply, which contains the firmware version (1.0.1.101):</p>
+<pre class="z-code"><code><span class="z-text z-plain">0000   55 60 01 42 40 09 00 03 31 2e 30 2e 31 2e 31 30   U`.B@...1.0.1.10
+0010   31 fa 36                                          1.6
+</span></code></pre>
+<p>The version number is 9 characters, so it’s possible the 6th byte <code>09</code> encodes this length information. I guess we’ll test this theory if we ever get a firmware update that changes the number of digits.</p>
+<p>And if we send <code>55:60:01:06:c0:00:00:05:90:dc</code>, we get this:</p>
+<pre class="z-code"><code><span class="z-text z-plain">0000   55 60 01 06 40 88 00 05 09 32 2c 31 2c 31 2e 30   U`..@....2,1,1.0
+0010   2e 31 0a 32 2c 32 2c 31 2e 30 2e 31 2e 31 30 31   .1.2,2,1.0.1.101
+0020   0a 32 2c 34 2c 53 48 31 30 31 38 32 33 30 37 30   .2,4,SH101823070
+0030   30 32 38 30 37 0a 33 2c 31 2c 31 2e 30 2e 31 0a   02807.3,1,1.0.1.
+0040   33 2c 32 2c 31 2e 30 2e 31 2e 31 30 31 0a 33 2c   3,2,1.0.1.101.3,
+0050   34 2c 53 48 31 30 31 38 32 33 30 37 30 30 32 38   4,SH101823070028
+0060   30 37 0a 34 2c 31 2c 31 2e 30 2e 31 0a 34 2c 32   07.4,1,1.0.1.4,2
+0070   2c 31 2e 30 2e 31 2e 31 30 31 0a 34 2c 34 2c 53   ,1.0.1.101.4,4,S
+0080   48 31 30 31 38 32 33 30 37 30 30 32 38 30 37 0a   H10182307002807.
+0090   91 d1                                             ..
+</span></code></pre>
+<p>That string starting with <code>SH101</code> is the serial number.</p>
+<p>If you open an RFCOMM channel 15 and listen for every incoming packet, you’ll notice that a packet is sent for every “change” to the device. For example, if I change the ANC, I get a packet starting with <code>55:00:01:03:e0</code>. Now, can I get the ANC status on demand, without there being a change? For this I looked at more packets sent during early communication, to see which got different responses when I changed the ANC. I found that when I sent <code>55:60:01:1e:c0:01:00:0c:03:98:19</code>, I get:</p>
+<pre class="z-code"><code><span class="z-text z-plain">0000   55 60 01 1e 40 06 00 0c 01 07 00 02 04 00 10 7a
+</span></code></pre>
+<p>The 10th byte appears to correspond to the ANC.
+<small class="sidenote marginnote">&#8203;<span class="sidenote-surroundings">&nbsp;(</span>Which, we can notice, is the same as the 10th byte in the command to <em>set</em> ANC. Turns out we can simplify those seemingly-different ANC commands to just one with the 10th byte alone differing.<span class="sidenote-surroundings">)&nbsp;</span></small></p>
+<table><thead><tr><th>Byte</th><th>ANC Mode</th></tr></thead><tbody>
+<tr><td>7</td><td>Transparency</td></tr>
+<tr><td>5</td><td>Off</td></tr>
+<tr><td>4</td><td>Adaptive</td></tr>
+<tr><td>3</td><td>Low</td></tr>
+<tr><td>2</td><td>Mid</td></tr>
+<tr><td>1</td><td>High</td></tr>
+</tbody></table>
+<h3 id="shortcuts"><a class="zola-anchor" href="#shortcuts" aria-label="Anchor link for: shortcuts">Shortcuts</a></h3>
+<p>The Ear (2) has a number of different pinch/hold controls.</p>
+<p>Whenever we click on the controls for the left earbud, the app sends out <code>55:60:01:18:c0:00:00:51:39:21</code> and receives, for example, this in response:</p>
+<pre class="z-code"><code><span class="z-text z-plain">0000   55 60 01 18 40 21 00 51 08 02 01 02 08 03 01 02
+0010   09 02 01 03 08 03 01 03 08 02 01 07 16 03 01 07
+0020   16 02 01 09 01 03 01 09 01 e0 30
+</span></code></pre>
+<p>If we change one shortcut (set left double-pinch to skip forward), we get:</p>
+<pre class="z-code"><code>0000   55 60 01 18 40 21 00 <ins>1d</ins> 08 02 01 02 <ins>09</ins> 03 01 02
+0010   09 02 01 03 08 03 01 03 08 02 01 07 16 03 01 07
+0020   16 02 01 09 01 03 01 09 01 <ins>39</ins> <ins>6d</ins>
+</code></pre>
+<p>We see changes on bytes 8 and 13 (<code>08</code> → <code>09</code>), and in the last two bytes. If we change left double-pinch to voice assistant, we get:</p>
+<pre class="z-code"><code>0000   55 60 01 18 40 21 00 1d 08 02 01 02 <ins>0b</ins> 03 01 02
+0010   09 02 01 03 08 03 01 03 08 02 01 07 16 03 01 07
+0020   16 02 01 09 01 03 01 09 01 b9 6e
+</code></pre>
+<p>Compared to last time, only byte 13 is changed (to <code>0b</code>). I guess byte 13 represents the actual action.</p>
+<p>Let’s try setting triple pinch to skip forward:</p>
+<pre class="z-code"><code>0000   55 60 01 18 40 21 00 1d 08 02 01 02 0b 03 01 02
+0010   09 02 01 03 09 03 01 03 08 02 01 07 16 03 01 07
+0020   16 02 01 09 01 03 01 09 01 <ins>29</ins> bc
+</code></pre>
+<p>This time the 21st byte is changed. If I set triple pinch to voice assistant, that 21st byte changes to <code>0b</code>.</p>
+<p>This is the table of shortcuts and byte positions:</p>
+<table><thead><tr><th>Shortcut</th><th>Byte index (from 0)</th></tr></thead><tbody>
+<tr><td>Left double-pinch</td><td>12</td></tr>
+<tr><td>Left triple-pinch</td><td>20</td></tr>
+<tr><td>Left pinch-hold</td><td>28</td></tr>
+<tr><td>Left double-pinch-hold</td><td>36</td></tr>
+<tr><td>Right double-pinch</td><td>16</td></tr>
+<tr><td>Right triple-pinch</td><td>24</td></tr>
+<tr><td>Right pinch-hold</td><td>32</td></tr>
+<tr><td>Right double-pinch-hold</td><td>40</td></tr>
+</tbody></table>
+<p>And of shortcut actions and their encodings:</p>
+<table><thead><tr><th>Action</th><th>Encoding</th></tr></thead><tbody>
+<tr><td>Skip Back</td><td><code>0x08</code></td></tr>
+<tr><td>Skip Forward</td><td><code>0x09</code></td></tr>
+<tr><td>Voice Assistant</td><td><code>0x0b</code></td></tr>
+<tr><td>Volume Up</td><td><code>0x12</code></td></tr>
+<tr><td>Volume Down</td><td><code>0x13</code></td></tr>
+<tr><td>Noise Control (Active/Off)</td><td><code>0x14</code></td></tr>
+<tr><td>Noise Control (Transparency/Active)</td><td><code>0x16</code></td></tr>
+<tr><td>Noise Control (Transparency/Active/Off)</td><td><code>0xa</code></td></tr>
+<tr><td>Noise Control (Transparency/Off)</td><td><code>0x15</code></td></tr>
+<tr><td>No Action</td><td><code>0x01</code></td></tr>
+</tbody></table>
+<p>Looking at the commands to change shortcuts now (this is to set left triple-pinch to skip forward):</p>
+<pre class="z-code"><code><span class="z-text z-plain">0000   55 60 01 03 f0 05 00 59 01 02 01 03 09 de 71
+</span></code></pre>
+<p>I noticed that the 13th byte encodes the shortcut action, and the previous two bytes match the previous two bytes before the index of that shortcut in the shortcut-info response as we figured out earlier. Now we can set the shortcut for any action.</p>
+<p>And what’s really cool is that like this we can use configurations that the official Nothing X app doesn’t allow, yet are possible on the device. For example, the app restricts double-pinch to skip forward/back and voice assistant. But now I can make double-pinch do noise control or volume up/down as well.</p>
+<h2 id="the-finished-product"><a class="zola-anchor" href="#the-finished-product" aria-label="Anchor link for: the-finished-product">The Finished Product</a></h2>
+<p>You can get the CLI tool here: <a href="https://gitlab.com/bharadwaj-raju/ear2ctl">bharadwaj-raju / ear2ctl</a>.</p>
+<pre data-lang="console" class="language-console z-code"><code class="language-console" data-lang="console"><span class="z-text z-plain">$ ear2ctl info
+Address: 2C:BE:EB:69:20:5A
+Firmware version: 1.0.1.101
+Serial number: SH10182307002807
+
+$ ear2ctl anc
+ANC: off
+
+$ ear2ctl anc transparency
+
+$ ear2ctl anc
+ANC: transparency
+
+$ ear2ctl shortcuts
+left:
+        double-pinch: skip-forward
+        triple-pinch: skip-back
+        pinch-hold: noise-control-transparency-active-off
+        double-pinch-hold: voice-assistant
+right:
+        double-pinch: skip-forward
+        triple-pinch: skip-back
+        pinch-hold: voice-assistant
+        double-pinch-hold: noise-control-transparency-off
+
+$ ear2ctl shortcuts right double-pinch-hold no-action
+
+$ ear2ctl --help
+Controls for the Nothing Ear (2)
+
+Usage: ear2ctl &lt;COMMAND&gt;
+
+Commands:
+  info              Device information
+  shortcuts         View and set pinch gestures
+  anc               Control active noise cancellation
+  ear-tip-fit-test  Start or stop the ear tip fit test
+  in-ear-detection  Turn in-ear detection on or off
+  low-latency-mode  Turn low latency mode on or off
+  help              Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
+
+</span></code></pre>
+
+  <div class="tombstone"></div>
+</main>
+
+<script src="/js/scrollsync.js"></script>
+
+    </div>
+  </section>
+</body>
+
+</html>

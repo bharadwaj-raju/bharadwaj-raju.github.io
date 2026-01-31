@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/icon.png" type="image/png">
+  <link rel="stylesheet" href="https://bharadwaj-raju.github.io/style.css?h=fd1cd5b3f23e99f3a0ff">
+  <link rel="stylesheet" href="https://bharadwaj-raju.github.io/print.css?h=9191ac8d6abd85d76080"
+    media="print">
+  <link rel="stylesheet" href="https://bharadwaj-raju.github.io/dark.css?h=54559654853c22f12773"
+    media="screen and (prefers-color-scheme: dark)">
+  
+  <link rel="preload" href="/fonts/alegreya-ht-pro/Alegreya-Regular.woff2" as="font" type="font/woff2"
+    crossorigin="anonymous" />
+  <link rel="preload" href="/fonts/alegreya-sans-ht/AlegreyaSans-Regular.woff2" as="font" crossorigin="anonymous" />
+  <link rel="preload" href="/fonts/alegreya-sans-ht/AlegreyaSansSC-Bold.woff2" as="font" crossorigin="anonymous" />
+  <link rel="stylesheet" type="text/css" href="/syntax-theme-dark.css" media="(prefers-color-scheme: dark)" />
+  <link rel="stylesheet" type="text/css" href="/syntax-theme-light.css" media="(prefers-color-scheme: light)" />
+
+  <title>Writing an Emulator and Assembler for a Fictional Console \  ~bharadwaj</title>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="/" id="logo"><span id="logo-tilde">~</span><span id="logo-full">bharadwaj</span></a>
+      <div id="menu">
+        <a href="/posts/">Posts</a>
+      </div>
+    </nav>
+  </header>
+  <section class="section">
+    <div class="container">
+      
+
+<div class="toc">
+  <ul>
+    
+    <li>
+      <a href="https://bharadwaj-raju.github.io/posts/writing-an-emulator-and-assembler-for-a-fictional-console/#design">Design</a>
+      
+    </li>
+    
+    <li>
+      <a href="https://bharadwaj-raju.github.io/posts/writing-an-emulator-and-assembler-for-a-fictional-console/#the-emulator-itself">The Emulator Itself</a>
+      
+    </li>
+    
+    <li>
+      <a href="https://bharadwaj-raju.github.io/posts/writing-an-emulator-and-assembler-for-a-fictional-console/#assembler">Assembler</a>
+      
+      <ul>
+        
+        <li>
+          <a href="https://bharadwaj-raju.github.io/posts/writing-an-emulator-and-assembler-for-a-fictional-console/#assembler-v2-labels">Assembler v2: Labels</a>
+        </li>
+        
+        <li>
+          <a href="https://bharadwaj-raju.github.io/posts/writing-an-emulator-and-assembler-for-a-fictional-console/#assembler-v2-data-driven-assembly">Assembler v2: Data-driven assembly</a>
+        </li>
+        
+        <li>
+          <a href="https://bharadwaj-raju.github.io/posts/writing-an-emulator-and-assembler-for-a-fictional-console/#assembler-v2-error-reporting">Assembler v2: Error reporting</a>
+        </li>
+        
+      </ul>
+      
+    </li>
+    
+    <li>
+      <a href="https://bharadwaj-raju.github.io/posts/writing-an-emulator-and-assembler-for-a-fictional-console/#programs">Programs</a>
+      
+      <ul>
+        
+        <li>
+          <a href="https://bharadwaj-raju.github.io/posts/writing-an-emulator-and-assembler-for-a-fictional-console/#invaders">Invaders</a>
+        </li>
+        
+        <li>
+          <a href="https://bharadwaj-raju.github.io/posts/writing-an-emulator-and-assembler-for-a-fictional-console/#quine">Quine</a>
+        </li>
+        
+      </ul>
+      
+    </li>
+    
+    <li>
+      <a href="https://bharadwaj-raju.github.io/posts/writing-an-emulator-and-assembler-for-a-fictional-console/#thoughts">Thoughts</a>
+      
+    </li>
+    
+  </ul>
+</div>
+
+<main>
+  <h1 class="title">
+    Writing an Emulator and Assembler for a Fictional Console
+  </h1>
+  <p class="dateline subtitle">2023-04-25</p>
+  <p>I was bored of emulating existing systems.</p>
+<p>I had written a CHIP-8 emulator and was halfway through writing a GameBoy emulator, and it was fun enough. But I wanted to see if I could design my own, entirely fictional, “chip” with its own instructions and quirks and stuff. There is of course inspiration drawn from CHIP-8, both in terms of what I took and what I avoided.</p>
+<p>Here is the code: <span class="sidenote-ref"><span class="sidenote-ref-text"><a href="https://gitlab.com/0xcd7c14/march">March</a></span><span class="sidenote-number"><small class="sidenote" role="note"><!--&#8203;-->&nbsp;<span class="sidenote-surroundings">&nbsp;(</span>It’s named “March” as in “my architecture”, and also after the GCC flag.<span class="sidenote-surroundings">)&nbsp;</span></small></span></span>
+.</p>
+<h2 id="design"><a class="zola-anchor" href="#design" aria-label="Anchor link for: design">Design</a></h2>
+<p>This thing has:</p>
+<ul>
+<li>32 2-byte registers</li>
+<li>32 level stack (only used to nest function calls)</li>
+<li>240x160 pixels full 24-bit RGB display, but with a palette of only 16 colors</li>
+<li>32 sprites</li>
+<li>a timer</li>
+<li>A, B, X, Y and directional key input</li>
+<li>64 whole KiB of memory (addressable 2 bytes at a time)</li>
+<li>a built-in 8x8 bitmap font for ASCII characters, public domain courtesy of Daniel Hepper</li>
+</ul>
+<p>You can see that this was built to have more room than the CHIP-8, but not too much so.</p>
+<p>There is only one single immediate mode instruction in this thing, and that is to set the value of a register. Everything else operates on registers. Nothing just takes a straightforward value. This makes you use and reuse a ton of registers for every little thing, but that’s the price we pay for flexibility. And this thing sure has flexibility; you can basically rewrite your own ROM on the fly.</p>
+<p>Each instruction is 3 words, or 6 bytes. The first word is the opcode, and the others are arguments. For example, the 
+instruction to draw a sprite looks like this:</p>
+<pre data-lang="plaintext" class="language-plaintext z-code"><code class="language-plaintext" data-lang="plaintext"><span class="z-text z-plain">0x1007 0xXXYY 0x00NN  # draw sprite number stored in register N at the coordinates (registerX, registerY)
+</span></code></pre>
+<h2 id="the-emulator-itself"><a class="zola-anchor" href="#the-emulator-itself" aria-label="Anchor link for: the-emulator-itself">The Emulator Itself</a></h2>
+<p>The CPU, interpreter of instructions, sits in <code>march.h</code>. The <code>march_cpu</code> struct holds all the memory, stack, and 
+program counter stuff. The function <code>march_step</code> executes the next instruction (by means of a massive switch-case) and 
+moves the program counter forward appropriately. Arguments are extracted by usual bit manipulation. For example, the 
+“draw sprite” instruction I mentioned earlier is decoded like this:</p>
+<pre data-lang="c" class="language-c z-code"><code class="language-c" data-lang="c"><span class="z-source z-c"><span class="z-comment z-line z-double-slash z-c"><span class="z-punctuation z-definition z-comment z-c">//</span> reg is the register array
+</span><span class="z-support z-type z-stdint z-c">uint8_t</span> x <span class="z-keyword z-operator z-assignment z-c">=</span> march<span class="z-punctuation z-accessor z-c">-&gt;</span>reg<span class="z-meta z-brackets z-c"><span class="z-punctuation z-section z-brackets z-begin z-c">[</span>arg1 <span class="z-keyword z-operator z-arithmetic z-c">&gt;&gt;</span> <span class="z-constant z-numeric z-integer z-decimal z-c">8</span><span class="z-punctuation z-section z-brackets z-end z-c">]</span></span><span class="z-punctuation z-terminator z-c">;</span>
+<span class="z-support z-type z-stdint z-c">uint8_t</span> y <span class="z-keyword z-operator z-assignment z-c">=</span> march<span class="z-punctuation z-accessor z-c">-&gt;</span>reg<span class="z-meta z-brackets z-c"><span class="z-punctuation z-section z-brackets z-begin z-c">[</span>arg1 <span class="z-keyword z-operator z-c">&amp;</span> <span class="z-constant z-numeric z-integer z-hexadecimal z-c"><span class="z-punctuation z-definition z-numeric z-base z-c">0x</span>00ff</span><span class="z-punctuation z-section z-brackets z-end z-c">]</span></span><span class="z-punctuation z-terminator z-c">;</span>
+<span class="z-support z-type z-stdint z-c">uint8_t</span> n <span class="z-keyword z-operator z-assignment z-c">=</span> march<span class="z-punctuation z-accessor z-c">-&gt;</span>reg<span class="z-meta z-brackets z-c"><span class="z-punctuation z-section z-brackets z-begin z-c">[</span>arg2 <span class="z-keyword z-operator z-c">&amp;</span> <span class="z-constant z-numeric z-integer z-hexadecimal z-c"><span class="z-punctuation z-definition z-numeric z-base z-c">0x</span>00ff</span><span class="z-punctuation z-section z-brackets z-end z-c">]</span></span><span class="z-punctuation z-terminator z-c">;</span>
+</span></code></pre>
+<p>By itself the <code>march.h</code> doesn’t do much; you have to write a frontend for it. There’s a no-graphics frontend in <code>marchemu.c</code>, mostly just useful for testing, and a graphical frontend using SFML in <code>marchemu-gui.cpp</code>.</p>
+<h2 id="assembler"><a class="zola-anchor" href="#assembler" aria-label="Anchor link for: assembler">Assembler</a></h2>
+<p>Honestly my favorite part of making this.</p>
+<p>This is a sample for how code in this assembly looked:</p>
+<pre data-lang="less" class="language-less z-code"><code class="language-less" data-lang="less"><span class="z-source z-less">setreg(R<span class="z-constant z-numeric z-integer z-decimal z-css">0</span><span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-integer z-decimal z-css">0</span>)
+setreg(R<span class="z-constant z-numeric z-css">1</span><span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">1</span>)
+setreg(R<span class="z-constant z-numeric z-css">2</span><span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">10</span>)
+setreg(R<span class="z-constant z-numeric z-css">3</span><span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">4</span><span class="z-meta z-selector z-css"><span class="z-entity z-name z-tag z-wildcard z-css">*</span></span><span class="z-constant z-numeric z-css">6</span>)
+skipifeq(R<span class="z-constant z-numeric z-integer z-decimal z-css">0</span><span class="z-punctuation z-separator z-sequence z-css">,</span> R<span class="z-constant z-numeric z-css">2</span><span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">3</span>)
+add(R<span class="z-constant z-numeric z-integer z-decimal z-css">0</span><span class="z-punctuation z-separator z-sequence z-css">,</span> R<span class="z-constant z-numeric z-css">1</span><span class="z-punctuation z-separator z-sequence z-css">,</span> R<span class="z-constant z-numeric z-integer z-decimal z-css">0</span>)
+printreg(R<span class="z-constant z-numeric z-integer z-decimal z-css">0</span>)
+jump(R<span class="z-constant z-numeric z-css">3</span>)
+stopexec()
+</span></code></pre>
+<p>This prints numbers 1 to 10. Note the <code>4*6</code> there: it means the fourth instruction, because each instruction is 6 bytes long. You can see how that would get cumbersome — we’ll address it.</p>
+<p>Originally my assembler worked in a bit too straightforward manner.
+The “assembly” source files were just Python scripts, the “instructions” were function calls defined in <code>asm.py</code>, 
+and <code>asm.py</code> would define those functions then read your “assembly” and just <code>exec()</code> it.</p>
+<p>This was fun and made some cool things possible, like having your assembly generate random sprites at compile-time, or do math expressions and whatnot. That is how the project sat for some years. When I picked it back up recently, I had learned some basic parsing, and so I wanted to make a more proper assembler, with better features this time.</p>
+<h3 id="assembler-v2-labels"><a class="zola-anchor" href="#assembler-v2-labels" aria-label="Anchor link for: assembler-v2-labels">Assembler v2: Labels</a></h3>
+<p>Code written in the first generation of this assembler was difficult to follow, and you might as well forget about modifying it. That’s because there were no labels to jump to, you had to give it the exact instruction number. So if you added or removed any instructions, be sure to remember to alter <em>all</em> the jump positions!</p>
+<p>So version 2 of my assembler added named labels. Now you could put labels anywhere, and the assembler would automatically replace them with the actual calculated instruction position.</p>
+<p>Let’s see how that same sample code looks now:</p>
+<pre data-lang="less" class="language-less z-code"><code class="language-less" data-lang="less"><span class="z-source z-less">setreg(R<span class="z-constant z-numeric z-integer z-decimal z-css">0</span><span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-integer z-decimal z-css">0</span>)
+setreg(R<span class="z-constant z-numeric z-css">1</span><span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">1</span>)
+setreg(R<span class="z-constant z-numeric z-css">2</span><span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">10</span>)
+setreg(R<span class="z-constant z-numeric z-css">3</span><span class="z-punctuation z-separator z-sequence z-css">,</span> %loop)
+
+%loop:
+skipifeq(R<span class="z-constant z-numeric z-integer z-decimal z-css">0</span><span class="z-punctuation z-separator z-sequence z-css">,</span> R<span class="z-constant z-numeric z-css">2</span><span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">3</span>)
+add(R<span class="z-constant z-numeric z-integer z-decimal z-css">0</span><span class="z-punctuation z-separator z-sequence z-css">,</span> R<span class="z-constant z-numeric z-css">1</span><span class="z-punctuation z-separator z-sequence z-css">,</span> R<span class="z-constant z-numeric z-integer z-decimal z-css">0</span>)
+printreg(R<span class="z-constant z-numeric z-integer z-decimal z-css">0</span>)
+jump(R<span class="z-constant z-numeric z-css">3</span>)
+stopexec()
+</span></code></pre>
+<p>Much better.</p>
+<h3 id="assembler-v2-data-driven-assembly"><a class="zola-anchor" href="#assembler-v2-data-driven-assembly" aria-label="Anchor link for: assembler-v2-data-driven-assembly">Assembler v2: Data-driven assembly</a></h3>
+<p>I also didn’t like how my instructions and their arguments were specified in my spec.txt and my asm.py and my march.h. I could reduce at least two of those. So I made an <a href="https://gitlab.com/0xcd7c14/march/-/blob/master/instructions.json">instructions.json</a>, which asm.py reads from to know what instructions there are and what arguments they take and how to pack them.</p>
+<p>Here is the entry in instructions.json for the sprite drawing one:</p>
+<pre data-lang="json" class="language-json z-code"><code class="language-json" data-lang="json"><span class="z-source z-json"><span class="z-string z-quoted z-double z-json"><span class="z-punctuation z-definition z-string z-begin z-json">&quot;</span>0x1007<span class="z-punctuation z-definition z-string z-end z-json">&quot;</span></span>: <span class="z-meta z-mapping z-json"><span class="z-punctuation z-section z-mapping z-begin z-json">{</span>
+    </span><span class="z-meta z-mapping z-key z-json"><span class="z-string z-quoted z-double z-json"><span class="z-punctuation z-definition z-string z-begin z-json">&quot;</span>arg-format<span class="z-punctuation z-definition z-string z-end z-json">&quot;</span></span></span><span class="z-meta z-mapping z-json"><span class="z-punctuation z-separator z-mapping z-key-value z-json">:</span> </span><span class="z-meta z-mapping z-value z-json"><span class="z-meta z-sequence z-json"><span class="z-punctuation z-section z-sequence z-begin z-json">[</span>
+        <span class="z-string z-quoted z-double z-json"><span class="z-punctuation z-definition z-string z-begin z-json">&quot;</span>0xXXYY<span class="z-punctuation z-definition z-string z-end z-json">&quot;</span></span><span class="z-punctuation z-separator z-sequence z-json">,</span>
+        <span class="z-string z-quoted z-double z-json"><span class="z-punctuation z-definition z-string z-begin z-json">&quot;</span>0x00NN<span class="z-punctuation z-definition z-string z-end z-json">&quot;</span></span>
+    <span class="z-punctuation z-section z-sequence z-end z-json">]</span></span><span class="z-punctuation z-separator z-mapping z-pair z-json">,</span>
+    </span><span class="z-meta z-mapping z-key z-json"><span class="z-string z-quoted z-double z-json"><span class="z-punctuation z-definition z-string z-begin z-json">&quot;</span>description<span class="z-punctuation z-definition z-string z-end z-json">&quot;</span></span></span><span class="z-meta z-mapping z-value z-json"><span class="z-punctuation z-separator z-mapping z-key-value z-json">:</span> </span><span class="z-meta z-mapping z-value z-json"><span class="z-string z-quoted z-double z-json"><span class="z-punctuation z-definition z-string z-begin z-json">&quot;</span>draw sprite regN at (regX, regY)<span class="z-punctuation z-definition z-string z-end z-json">&quot;</span></span><span class="z-punctuation z-separator z-mapping z-pair z-json">,</span>
+    </span><span class="z-meta z-mapping z-key z-json"><span class="z-string z-quoted z-double z-json"><span class="z-punctuation z-definition z-string z-begin z-json">&quot;</span>asm<span class="z-punctuation z-definition z-string z-end z-json">&quot;</span></span></span><span class="z-meta z-mapping z-value z-json"><span class="z-punctuation z-separator z-mapping z-key-value z-json">:</span> </span><span class="z-meta z-mapping z-value z-json"><span class="z-string z-quoted z-double z-json"><span class="z-punctuation z-definition z-string z-begin z-json">&quot;</span>drawsprite<span class="z-punctuation z-definition z-string z-end z-json">&quot;</span></span>
+<span class="z-punctuation z-section z-mapping z-end z-json">}</span></span>
+</span></code></pre>
+<p>The assembler has a <code>pack_arguments</code> function which uses the entries in <code>arg-format</code> to get the width and position of each argument. Then it just assembles the correct hex string based on this, and done.</p>
+<p>And this also now serves as the new “documentation” for the human programmer. Sure, it’s a bit more verbose than the txt, but with Ctrl+F one can manage.</p>
+<p>Version 2 also actually parses the assembly, and doesn’t just straight-up exec() it. It’s not perfect still: you can’t split instructions over multiple lines, for instance.
+Someday I might make this a better parser, but that’s fairly low priority for now.</p>
+<h3 id="assembler-v2-error-reporting"><a class="zola-anchor" href="#assembler-v2-error-reporting" aria-label="Anchor link for: assembler-v2-error-reporting">Assembler v2: Error reporting</a></h3>
+<p>Having the assembler fail with an <code>IndexError</code> because you didn’t provide enough arguments with no indication of what part of your code is causing it is less than ideal. Even worse is having the assembler silently generate wrong code because you passed in an argument which wouldn’t fit in the field, and it tried to pack it in there anyway.</p>
+<p>So with some more effort, we can add some nice error reporting to our assembler. Now it tells you what went wrong and where, and uses the power of JSON-as-docs to even pull out the documentation for you:</p>
+<pre data-lang="plaintext" class="language-plaintext z-code"><code class="language-plaintext" data-lang="plaintext"><span class="z-text z-plain">Line 55: Not enough arguments for setreg.
+Arguments for setreg:
+    X, N (0x00XX 0xNNNN)
+    set register X to 0xNNNN
+</span></code></pre>
+<p>and</p>
+<pre data-lang="plaintext" class="language-plaintext z-code"><code class="language-plaintext" data-lang="plaintext"><span class="z-text z-plain">Line 50: Argument 32 cannot be packed into field of width 1.
+Arguments for drawchar:
+    X, Y, F, B, C (0xXYFB 0x00CC)
+    draw ASCII character code regC at (regX, regY), fg palette = regF, bg palette = regB
+Consider using a register &lt;= 15.
+</span></code></pre>
+<p>Now our assembler is a lot more usable.</p>
+<h2 id="programs"><a class="zola-anchor" href="#programs" aria-label="Anchor link for: programs">Programs</a></h2>
+<h3 id="invaders"><a class="zola-anchor" href="#invaders" aria-label="Anchor link for: invaders">Invaders</a></h3>
+<p>The longest program I’ve written in this thing is a very basic Invaders clone.</p>
+<p><video controls src="https://gitlab.com/0xcd7c14/march/-/raw/master/img/invaders.webm" alt="Gameplay video"></video></p>
+<p>Here’s the source code: <a href="https://gitlab.com/0xcd7c14/march/-/blob/master/programs/invaders"><code>invaders</code></a>.</p>
+<h3 id="quine"><a class="zola-anchor" href="#quine" aria-label="Anchor link for: quine">Quine</a></h3>
+<p>Here’s a more interesting program: it displays its own ROM on the screen.</p>
+<img alt="the quine" src="./emulator-quine.png" onload="javascript:{this.style.scale = (1/window.devicePixelRatio)}" />
+<p>Here’s the source code: <a href="https://gitlab.com/0xcd7c14/march/-/blob/master/programs/guiquine"><code>guiquine</code></a> and also below.</p>
+<pre data-lang="less" class="language-less z-code"><code class="language-less" data-lang="less"><span class="z-source z-less">setreg(R_MEM_PTR<span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-integer z-decimal z-css">0</span>)
+setreg(R_SHIFT_FOUR<span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">16</span>)  # (x &gt;&gt; <span class="z-constant z-numeric z-css">4</span>) == (x / <span class="z-constant z-numeric z-css">2</span>^<span class="z-constant z-numeric z-css">4</span>)
+setreg(R_INC<span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">1</span>)
+setreg(R_CHARMAP_ADDR<span class="z-punctuation z-separator z-sequence z-css">,</span> %charmap)
+setreg(R_LOOP_ADDR<span class="z-punctuation z-separator z-sequence z-css">,</span> %loop)
+setreg(R_X_POS<span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">4</span>)
+setreg(R_ONE<span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">1</span>)
+setreg(R_ZERO<span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-integer z-decimal z-css">0</span>)
+setreg(R_<span class="z-constant z-numeric z-css">255</span><span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">255</span>)
+setpalette(R_ONE<span class="z-punctuation z-separator z-sequence z-css">,</span> R_<span class="z-constant z-numeric z-css">255</span><span class="z-punctuation z-separator z-sequence z-css">,</span> R_<span class="z-constant z-numeric z-css">255</span><span class="z-punctuation z-separator z-sequence z-css">,</span> R_<span class="z-constant z-numeric z-css">255</span>)
+setreg(R_Y_POS<span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">4</span>)
+setreg(R_PIXEL_SHIFT<span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">8</span>)
+setreg(R_MAX<span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">250</span>)  # number of bytes in the ROM
+setreg(R_X_MAX<span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">225</span>)
+
+clearscreen(R_ZERO)
+
+%loop:
+readmem(R_MEM<span class="z-punctuation z-separator z-sequence z-css">,</span> R_MEM_PTR)
+setregXtoregY(R_UPPER<span class="z-punctuation z-separator z-sequence z-css">,</span> R_MEM)
+setregXtoregY(R_LOWER<span class="z-punctuation z-separator z-sequence z-css">,</span> R_MEM)
+<span class="z-meta z-selector z-css"><span class="z-entity z-name z-tag z-css">div</span><span class="z-meta z-function z-parameters z-less"><span class="z-punctuation z-definition z-group z-begin z-css">(</span><span class="z-string z-unquoted z-css">R_UPPER</span><span class="z-punctuation z-separator z-css">,</span> <span class="z-string z-unquoted z-css">R_SHIFT_FOUR</span><span class="z-punctuation z-separator z-css">,</span> <span class="z-string z-unquoted z-css">R_UPPER</span><span class="z-punctuation z-definition z-group z-end z-css">)</span></span>
+</span>setregXtoregY(R_CHAR<span class="z-punctuation z-separator z-sequence z-css">,</span> R_CHARMAP_ADDR)
+add(R_CHAR<span class="z-punctuation z-separator z-sequence z-css">,</span> R_UPPER<span class="z-punctuation z-separator z-sequence z-css">,</span> R_CHAR)
+readmem(R_CHAR<span class="z-punctuation z-separator z-sequence z-css">,</span> R_CHAR)
+drawchar(R_X_POS<span class="z-punctuation z-separator z-sequence z-css">,</span> R_Y_POS<span class="z-punctuation z-separator z-sequence z-css">,</span> R_ONE<span class="z-punctuation z-separator z-sequence z-css">,</span> R_ZERO<span class="z-punctuation z-separator z-sequence z-css">,</span> R_CHAR)
+add(R_X_POS<span class="z-punctuation z-separator z-sequence z-css">,</span> R_PIXEL_SHIFT<span class="z-punctuation z-separator z-sequence z-css">,</span> R_X_POS)
+mul(R_UPPER<span class="z-punctuation z-separator z-sequence z-css">,</span> R_SHIFT_FOUR<span class="z-punctuation z-separator z-sequence z-css">,</span> R_UPPER)
+subtract(R_LOWER<span class="z-punctuation z-separator z-sequence z-css">,</span> R_UPPER<span class="z-punctuation z-separator z-sequence z-css">,</span> R_LOWER)
+setregXtoregY(R_CHAR<span class="z-punctuation z-separator z-sequence z-css">,</span> R_CHARMAP_ADDR)
+add(R_CHAR<span class="z-punctuation z-separator z-sequence z-css">,</span> R_LOWER<span class="z-punctuation z-separator z-sequence z-css">,</span> R_CHAR)
+readmem(R_CHAR<span class="z-punctuation z-separator z-sequence z-css">,</span> R_CHAR)
+drawchar(R_X_POS<span class="z-punctuation z-separator z-sequence z-css">,</span> R_Y_POS<span class="z-punctuation z-separator z-sequence z-css">,</span> R_ONE<span class="z-punctuation z-separator z-sequence z-css">,</span> R_ZERO<span class="z-punctuation z-separator z-sequence z-css">,</span> R_CHAR)
+setdrawflag()
+add(R_MEM_PTR<span class="z-punctuation z-separator z-sequence z-css">,</span> R_INC<span class="z-punctuation z-separator z-sequence z-css">,</span> R_MEM_PTR)
+add(R_X_POS<span class="z-punctuation z-separator z-sequence z-css">,</span> R_PIXEL_SHIFT<span class="z-punctuation z-separator z-sequence z-css">,</span> R_X_POS)
+skipifleq(R_X_POS<span class="z-punctuation z-separator z-sequence z-css">,</span> R_X_MAX<span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">2</span>)
+setreg(R_X_POS<span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">4</span>)
+add(R_Y_POS<span class="z-punctuation z-separator z-sequence z-css">,</span> R_PIXEL_SHIFT<span class="z-punctuation z-separator z-sequence z-css">,</span> R_Y_POS)
+skipifgeq(R_MEM_PTR<span class="z-punctuation z-separator z-sequence z-css">,</span> R_MAX<span class="z-punctuation z-separator z-sequence z-css">,</span> <span class="z-constant z-numeric z-css">1</span>)
+jump(R_LOOP_ADDR)
+
+pauseexec()
+
+%charmap:
+literalstr(&quot;<span class="z-constant z-numeric z-css">0123456789</span>ABCDEF&quot;)
+</span></code></pre>
+<h2 id="thoughts"><a class="zola-anchor" href="#thoughts" aria-label="Anchor link for: thoughts">Thoughts</a></h2>
+<p>One of my favorite projects. It taught me parsing, bit manipulation, some idea of a low-level instruction set, and gave me a taste of programming in an assembly-level language.</p>
+<p>If you’re bored or finished with the standard recommendation of CHIP-8, you might enjoy doing something like this. Make up your own chip.</p>
+
+  <div class="tombstone"></div>
+</main>
+
+<script src="/js/scrollsync.js"></script>
+
+    </div>
+  </section>
+</body>
+
+</html>
