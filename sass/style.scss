@@ -745,10 +745,13 @@ aside {
     .sidenote {
         float: right;
         text-align: left;
-
-        width: 100%;
+        width: 25%;
         margin: 1rem 0;
-        padding-left: 15%;
+        padding-left: 1rem;
+        margin-left: 1rem;
+        margin-top: 2rem;
+        border-left: 1px solid var(--subtle);
+        hyphens: auto;
     }
 
     .sidenote.marginnote {
@@ -756,6 +759,7 @@ aside {
         width: unset;
         float: none;
         display: block;
+        border-left: none;
     }
 
     .sidenote::before {
@@ -828,7 +832,7 @@ body {
 }
 
 /* Highlight the sidenote when mouse hovers on the sidenote number or ref in body, and vice versa. */
-@media (min-width: 1400px) {
+@media (min-width: 1200px) {
 
     .sidenote,
     .sidenote-ref,
@@ -864,6 +868,40 @@ body {
 
     .sidenote-ref:hover .sidenote {
         background-color: var(--gold-muted);
+    }
+}
+
+@media (max-width: 1200px) {
+    .sidenote,
+    .sidenote-ref,
+    .sidenote *,
+    .sidenote-ref * {
+        transition: all var(--transition);
+    }
+
+    .sidenote-number:hover .sidenote {
+        border-color: var(--gold-muted);
+    }
+
+    .sidenote-number:hover::after,
+    .sidenote-ref:hover .sidenote-number::after {
+        color: var(--gold-muted);
+    }
+
+    .sidenote-ref:hover .sidenote {
+        border-color: var(--gold-muted);
+    }
+
+    .sidenote-ref:hover .sidenote::after {
+        color: var(--gold);
+    }
+
+    .sidenote-number, .sidenote-ref {
+        &:hover, &:active, &:focused {
+            .sidenote {
+                border: 2px solid var(--gold-muted);
+            }
+        }
     }
 }
 
