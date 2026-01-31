@@ -739,6 +739,11 @@ aside {
         padding-left: 5px;
     }
 }
+@media (min-width: 1400px) {
+    .sidenote code {
+        display: inline-block;
+    }
+}
 
 /* Narrow viewport */
 @media (max-width: 1200px) {
@@ -846,14 +851,6 @@ body {
         background-color: var(--gold-muted);
     }
 
-    // .sidenote-ref:hover code {
-    //     color: var(--text);
-    // }
-
-    .sidenote code {
-        display: inline-block;
-    }
-
     .sidenote-ref:hover a {
         color: var(--link-highlighted);
     }
@@ -875,22 +872,30 @@ body {
     .sidenote,
     .sidenote-ref,
     .sidenote *,
-    .sidenote-ref * {
+    .sidenote-ref *
+    .sidenote-ref-text {
         transition: all var(--transition);
     }
 
     .sidenote-number:hover::after,
     .sidenote-ref:hover .sidenote-number::after {
-        color: var(--gold-muted);
+        color: var(--gold-text);
+    }
+
+    .sidenote-ref:hover {
+        & .sidenote-ref-text {
+            text-decoration: underline;
+            text-decoration-color: var(--gold-text);
+        }
     }
 
     .sidenote-number, .sidenote-ref {
         &:hover {
             & .sidenote {
                 &::before {
-                    color: var(--gold-muted);
+                    color: var(--gold-text);
                 }
-                border-color: var(--gold-muted);
+                border-color: var(--gold-text);
             }
         }
     }
