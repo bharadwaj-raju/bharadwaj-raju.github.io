@@ -561,7 +561,7 @@ pre {
     line-height: 1.5rem;
 }
 
-pre code mark {
+pre code mark, pre code .z-hl {
     background-color: var(--gold-muted-tr);
     color: unset;
     width: 100%;

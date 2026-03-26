@@ -35,7 +35,7 @@ body .highlight {
     border-color: transparent;
 }
 
-pre code mark {
+pre code mark, pre code .z-hl {
     background-color: var(--gold-muted-tr2);
 }
 
