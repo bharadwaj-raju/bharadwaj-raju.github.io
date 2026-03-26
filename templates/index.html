@@ -2,16 +2,38 @@
 
 {% block content %}
 <main class="frontpage">
+  <style type="text/css">
+  #email-check:checked + #email {
+    display: none;
+  }
+  a {
+    text-decoration: underline;
+  }
+  </style>
   <h1 class="title">
     Hi!
   </h1>
+  <script type="text/javascript">
+  function toggleEmail() {
+    document.getElementById("email").style.display = "block";
+  }
+  </script>
   <p>
     I’m Bharadwaj Raju. I’m a student at the <a href="https://scis.uohyd.ac.in/">University of Hyderabad</a>, a <a
-      href="https://invent.kde.org/bharadwaj-raju">KDE developer</a>, and a graduated mentee from the Spring 2025 term of the <a href="posts/kernel-mentorship/">Linux Kernel Mentorship Project</a>.
+      href="https://invent.kde.org/bharadwaj-raju">KDE developer</a>, and a graduate of the <a href="posts/kernel-mentorship/">Linux Kernel Mentorship Program</a>.
   </p>
   <p>
-    <a href="https://github.com/bharadwaj-raju">GitHub</a> / <a href="https://gitlab.com/bharadwaj-raju">GitLab</a>
+    Currently I work on various parts of the Linux stack for <a href="https://machinesoul.in/">MachineSoul</a>.
   </p>
+  <p>
+    <a href="https://github.com/bharadwaj-raju">GitHub</a> / <a href="https://gitlab.com/bharadwaj-raju">GitLab</a> / <label for="email-check"><a>Contact</a></label>
+  </p>
+  <input id="email-check" type="checkbox" style="display: none;" checked>
+  <div id="email">
+  <pre><code>
+<span class="z-keyword z-operator">>>></span> ".".join((n:=<span class=z-string>"bharadwaj"</span>,<span class=z-string>"raju"</span>))+f"{ord(n[1])-ord(n[2])}"*int(len(n)**0.5) + "@" + "".join(chr(ord(nx)-dx)for nx,dx in zip(n[:5],(-5,-5,0,9,-11))) + ".com"
+  </code></pre>
+  </div>
   <p>
     I’m particularly interested in systems programming, computer modelling, procedural generation, and
     human&ndash;computer interaction.
