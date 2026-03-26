@@ -8,6 +8,10 @@
   }
   a {
     text-decoration: underline;
+    cursor: pointer;
+  }
+  #email-shell-prompt {
+    user-select: none;
   }
   </style>
   <h1 class="title">
@@ -30,9 +34,7 @@
   </p>
   <input id="email-check" type="checkbox" style="display: none;" checked>
   <div id="email">
-  <pre><code>
-<span class="z-keyword z-operator">>>></span> ".".join((n:=<span class=z-string>"bharadwaj"</span>,<span class=z-string>"raju"</span>))+f"{ord(n[1])-ord(n[2])}"*int(len(n)**0.5) + "@" + "".join(chr(ord(nx)-dx)for nx,dx in zip(n[:5],(-5,-5,0,9,-11))) + ".com"
-  </code></pre>
+  <pre><code><span class="z-keyword z-operator" id="email-shell-prompt">>>> </span>".".join((n:=<span class=z-string>"bharadwaj"</span>,<span class=z-string>"raju"</span>))+f"{ord(n[1])-ord(n[2])}"*int(len(n)**0.5) + "@" + "".join(chr(ord(nx)-dx)for nx,dx in zip(n[:5],(-5,-5,0,9,-11))) + ".com"</code></pre>
   </div>
   <p>
     I’m particularly interested in systems programming, computer modelling, procedural generation, and
