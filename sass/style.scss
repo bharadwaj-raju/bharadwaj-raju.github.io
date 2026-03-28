@@ -140,6 +140,7 @@
        url('/fonts/FantasqueSansMono/FantasqueSansMono-Regular.woff') format('woff'); /* Firefox >= 3.6, any other modern browser */
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -148,6 +149,7 @@
        url('/fonts/FantasqueSansMono/FantasqueSansMono-Bold.woff') format('woff'); /* Firefox >= 3.6, any other modern browser */
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -156,6 +158,7 @@
        url('/fonts/FantasqueSansMono/FantasqueSansMono-BoldItalic.woff') format('woff'); /* Firefox >= 3.6, any other modern browser */
   font-weight: 700;
   font-style: italic;
+  font-display: swap;
 }
 
 @font-face {
@@ -164,6 +167,7 @@
        url('/fonts/FantasqueSansMono/FantasqueSansMono-Italic.woff') format('woff'); /* Firefox >= 3.6, any other modern browser */
   font-weight: 400;
   font-style: italic;
+  font-display: swap;
 }
 
 :root {
