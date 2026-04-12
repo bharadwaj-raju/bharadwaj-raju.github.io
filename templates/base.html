@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="canonical" href="{{current_url | safe | replace('bharadwaj-raju.github.io', 'bharadwajraju.com') | safe}}" />
   <link rel="icon" href="/icon.png" type="image/png">
   <link rel="stylesheet" href="{{get_url(path='/style.css' , cachebust=true)}}">
   <link rel="stylesheet" href="{{get_url(path='/print.css' , cachebust=true)}}"
@@ -18,8 +19,22 @@
   <link rel="stylesheet" type="text/css" href="/syntax-theme-dark.css" media="(prefers-color-scheme: dark)" />
   <link rel="stylesheet" type="text/css" href="/syntax-theme-light.css" media="(prefers-color-scheme: light)" />
 
+  <noscript>
+    <meta http-equiv="refresh" content="0; url={{current_url | safe | replace('bharadwaj-raju.github.io', 'bharadwajraju.com') | safe}}">
+  </noscript>
+
   <title>{% if page %}{{page.title | striptags}} \ {% endif %} ~bharadwaj</title>
 </head>
+
+<script>
+(function() {
+var oldHost = "bharadwaj-raju.github.io";
+var newHost = "https://bharadwajraju.com";
+if (window.location.hostname === oldHost) {
+window.location.replace(newHost + window.location.pathname + window.location.search + window.location.hash);
+}
+})();
+</script>
 
 <body>
   <header>
